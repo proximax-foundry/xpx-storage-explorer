@@ -1,0 +1,28 @@
+@charset "utf-8";
+
+// Import a Google Font
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+// Override Spectre's variables
+
+// ProximaX Brand Colors
+$primary-color: #78B6E4 !default;
+$success-color: #20B5AC !default;
+$warning-color: #F4A900 !default;
+$error-color: #EB6000 !default;
+
+$base-font-family: "Open Sans" !default;
+$fallback-font-family: sans-serif;
+$title-font-family: "Poppins", $fallback-font-family !default;
+
+// Update some of Spectre's component variables
+h1, h2, h3, h4, h5, h6 {
+  font-family: $title-font-family;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: $title-font-family;
+}
+
+@import "../../node_modules/spectre.css/src/spectre.scss";
+@import "../../node_modules/spectre.css/src/spectre-icons.scss";
