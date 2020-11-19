@@ -2,17 +2,19 @@
   <nav id="navMenu" class="navbar mb-2 p-2 p-fixed">
     <div class="navbar-section">
       <router-link to="/" class="navbar-brand d-inline-flex">
-        <img
-          src="@/assets/logo-name.png"
-          alt="ProximaX Logo"
-          width="150"
-        />
+        <img src="@/assets/logo-name.png" alt="ProximaX Logo" width="150" />
         <div class="divider-vert"></div>
-        <small class="label label-secondary text-bold">{{ appStore.name }} v{{ appStore.version }}</small>
+        <small class="label label-secondary text-bold"
+          >{{ appStore.name }} v{{ appStore.version }}</small
+        >
       </router-link>
     </div>
     <div class="navbar-center">
-      <button class="btn btn-link btn-action btn-lg" href="#navbarModal" @click="$emit('update:modalActive', !modalActive)">
+      <button
+        class="btn btn-link btn-action btn-lg"
+        href="#navbarModal"
+        @click="$emit('update:modalActive', !modalActive)"
+      >
         <i class="icon icon-menu"></i>
       </button>
     </div>
@@ -57,6 +59,7 @@ import Search from "@/components/Search.vue";
 import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 
 export default {
+  name: "Header",
   components: {
     NodeController,
     Search,
@@ -79,6 +82,3 @@ export default {
   },
 };
 </script>
-
-<style lang="sass" scoped>
-</style>

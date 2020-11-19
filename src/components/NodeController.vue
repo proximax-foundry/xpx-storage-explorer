@@ -1,9 +1,6 @@
 <template>
   <div class="form-group">
-    <select
-      class="form-select"
-      @change="changeNode"
-    >
+    <select class="form-select" @change="changeNode">
       <option
         v-for="(item, index) in siriusStore.state.nodes"
         :key="index"
@@ -13,10 +10,22 @@
       </option>
     </select>
   </div>
-  <form class="form-group" :class="{ 'has-error' : err }" @submit.prevent="addNewNode">
+  <form
+    class="form-group"
+    :class="{ 'has-error': err }"
+    @submit.prevent="addNewNode"
+  >
     <div class="input-group">
-      <input v-model="newUrl" type="text" class="form-input" placeholder="Add Node">
-      <button class="btn btn-primary input-group-btn" :class="{ loading: loading }">
+      <input
+        v-model="newUrl"
+        type="text"
+        class="form-input"
+        placeholder="Add Node"
+      />
+      <button
+        class="btn btn-primary input-group-btn"
+        :class="{ loading: loading }"
+      >
         <i class="icon icon-plus"></i>
       </button>
     </div>
@@ -28,6 +37,7 @@
 import { inject, ref } from "vue";
 
 export default {
+  name: "NodeController",
   setup(props, { emit }) {
     const err = ref("");
     const loading = ref(false);

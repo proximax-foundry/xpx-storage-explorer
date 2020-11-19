@@ -1,7 +1,11 @@
 <template>
   <label class="form-switch">
-  <input type="checkbox" :checked="appStore.state.darkTheme" @change="themeChange">
-  <i class="form-icon"></i> Dark Theme
+    <input
+      type="checkbox"
+      :checked="appStore.state.darkTheme"
+      @change="themeChange"
+    />
+    <i class="form-icon"></i> Dark Theme
   </label>
 </template>
 
@@ -9,6 +13,7 @@
 import { inject } from "vue";
 
 export default {
+  name: "ThemeSwitcher",
   setup(props, { emit }) {
     const appStore = inject("appStore");
 

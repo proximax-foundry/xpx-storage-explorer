@@ -1,19 +1,22 @@
 <template>
   <Susp>
     <template #default>
-      <Map />
+      <MapNodes />
     </template>
   </Susp>
 </template>
 
 <script>
+import { defineAsyncComponent } from "vue";
 import Susp from "@/components/SuspenseLoadError.vue";
-import Map from "@/components/Map.vue";
 
 export default {
+  name: "Map",
   components: {
     Susp,
-    Map,
+    MapNodes: defineAsyncComponent(() =>
+      import("@/components/MapNodes.vue" /* webpackChunkName: "mapNodes" */)
+    ),
   },
 };
 </script>

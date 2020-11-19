@@ -45,6 +45,7 @@ import axios from "axios";
 import mapboxgl from "mapbox-gl/dist/mapbox-gl";
 
 export default {
+  name: "MapNodes",
   async setup() {
     const map = ref(null);
     const mapMarker = require("@/assets/map-pointer.svg");

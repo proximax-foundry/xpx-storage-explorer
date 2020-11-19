@@ -18,6 +18,7 @@ import Loading from "@/components/Loading.vue";
 import Error from "@/components/Error.vue";
 
 export default {
+  name: "SuspenseLoadErrorTemplate",
   components: {
     Loading,
     Error,

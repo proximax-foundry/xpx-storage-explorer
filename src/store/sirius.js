@@ -13,20 +13,13 @@ const state = reactive({
   selectedNode: computed(() => currentNode.value),
 });
 
-const blockHttp = computed(
-  () => new BlockHttp(state.selectedNode)
-);
-const chainHttp = computed(
-  () => new ChainHttp(state.selectedNode)
-);
+const blockHttp = computed(() => new BlockHttp(state.selectedNode));
+const chainHttp = computed(() => new ChainHttp(state.selectedNode));
 const nodeHttp = computed(() => new NodeHttp(state.selectedNode));
 
 const wsListener = computed(() => {
   const url = parse(siriusStore.state.selectedNode, true);
-  listenerWS.value = new Listener(
-    "wss://" + url.hostname + ":443",
-    WebSocket
-  );
+  listenerWS.value = new Listener("wss://" + url.hostname + ":443", WebSocket);
 
   return listenerWS.value;
 });
@@ -79,7 +72,7 @@ function stopListener() {
     listenerWS.value.terminate();
     listenerWS.value = null;
   }
-};
+}
 
 export const siriusStore = readonly({
   state,

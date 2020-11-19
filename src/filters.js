@@ -6,4 +6,4 @@ export default {
       blockTimestamp.compact() + Deadline.timestampNemesisBlock * 1000
     );
   },
-}
+};

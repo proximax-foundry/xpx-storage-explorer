@@ -6,3 +6,9 @@
     <div class="empty-title h1">Loading</div>
   </div>
 </template>
+
+<script>
+export default {
+  name: "Loading",
+};
+</script>

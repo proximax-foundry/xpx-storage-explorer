@@ -15,6 +15,7 @@ import Chart from "chart.js";
 import axios from "axios";
 
 export default {
+  name: "LineChart",
   async setup() {
     const title = ref(null);
     const dynamicChart = ref(null);

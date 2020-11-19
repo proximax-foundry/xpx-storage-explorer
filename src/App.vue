@@ -33,6 +33,7 @@ import { siriusStore } from "@/store/sirius";
 import { appStore } from "@/store/app";
 
 export default {
+  name: appStore.name,
   components: {
     NavbarModal,
     Header,
@@ -46,7 +47,7 @@ export default {
   setup() {
     return {
       modalActive: ref(false),
-    }
+    };
   },
 };
 </script>

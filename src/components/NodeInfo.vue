@@ -50,6 +50,7 @@ import { inject, ref, watch } from "vue";
 import Loading from "@/components/Loading.vue";
 
 export default {
+  name: "NodeInfo",
   components: {
     Loading,
   },

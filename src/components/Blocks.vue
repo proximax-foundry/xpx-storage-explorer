@@ -20,7 +20,9 @@
             </td>
             <td data-th="Fees">{{ item.fee }}</td>
             <td data-th="# Txs">{{ item.txCount }}</td>
-            <td data-th="Timestamp">{{ $filters.getRelativeTimestamp(item.ts).toLocaleString() }}</td>
+            <td data-th="Timestamp">
+              {{ $filters.getRelativeTimestamp(item.ts).toLocaleString() }}
+            </td>
           </tr>
         </transition-group>
       </table>
@@ -45,6 +47,7 @@ import Error from "@/components/Error.vue";
 import Loading from "@/components/Loading.vue";
 
 export default {
+  name: "Blocks",
   components: {
     Error,
     Loading,
