@@ -22,7 +22,6 @@ import { defineAsyncComponent } from "vue";
 import Susp from "@/components/SuspenseLoadError.vue";
 
 export default {
-  name: "Statistics",
   components: {
     Susp,
     LineChart: defineAsyncComponent(() => import("@/components/LineChart.vue" /* webpackChunkName: "lineChart" */ )),

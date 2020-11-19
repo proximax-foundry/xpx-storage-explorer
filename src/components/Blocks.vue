@@ -20,7 +20,7 @@
             </td>
             <td data-th="Fees">{{ item.fee }}</td>
             <td data-th="# Txs">{{ item.txCount }}</td>
-            <td data-th="Timestamp">{{ item.ts.toLocaleString() }}</td>
+            <td data-th="Timestamp">{{ $filters.getRelativeTimestamp(item.ts).toLocaleString() }}</td>
           </tr>
         </transition-group>
       </table>
@@ -41,12 +41,10 @@
 
 <script>
 import { inject, onUnmounted, reactive, ref, watch } from "vue";
-import { Listener } from "tsjs-xpx-chain-sdk";
 import Error from "@/components/Error.vue";
 import Loading from "@/components/Loading.vue";
 
 export default {
-  name: "BlocksTable",
   components: {
     Error,
     Loading,
@@ -62,7 +60,6 @@ export default {
     };
 
     const isLoading = ref(false);
-    const listenerWS = ref(null);
     const tableData = reactive([]);
 
     const getBlocks = async (blockHeight) => {
@@ -77,7 +74,7 @@ export default {
               validator: element.signer.publicKey,
               fee: element.totalFee.compact(),
               txCount: element.numTransactions,
-              ts: siriusStore.getRelativeTimestamp(element.timestamp),
+              ts: element.timestamp,
             });
           });
         }
@@ -101,25 +98,18 @@ export default {
         validator: block.signer.publicKey,
         fee: block.totalFee.compact(),
         txCount: block.numTransactions,
-        ts: siriusStore.getRelativeTimestamp(block.timestamp),
+        ts: block.timestamp,
       });
     };
 
     const listenerStop = (start) => {
-      if (listenerWS.value != null) {
-        listenerWS.value.terminate();
-        console.log("ws connection closed");
-      }
-      listenerWS.value = new Listener(
-        "wss://" + siriusStore.state.selectedNode + ":443",
-        WebSocket
-      );
+      siriusStore.stopListener();
 
       if (start) {
-        listenerWS.value
+        siriusStore.wsListener
           .open()
           .then(() => {
-            listenerWS.value.newBlock().subscribe(
+            siriusStore.wsListener.newBlock().subscribe(
               (blockInfo) => subscribeNewBlock(blockInfo),
               (err) => errorHandler("New Block Websocket Error", err)
             );
@@ -155,6 +145,7 @@ export default {
       .getBlockchainHeight()
       .toPromise();
     await getBlocks(height.value.compact());
+    listenerStop(true);
 
     return {
       err,
@@ -166,7 +157,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 .block-table-move
   transition: all 1s ease
 

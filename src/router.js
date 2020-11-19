@@ -6,19 +6,20 @@ import Statistics from "@/views/Statistics.vue";
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    // Home must always be the first element for Navbar to avoid creating duplicate link
     {
       path: "/",
-      name: "home",
+      name: "Home",
       component: Home,
     },
     {
       path: "/map",
-      name: "map",
+      name: "Map",
       component: Map,
     },
     {
       path: "/statistics",
-      name: "statistics",
+      name: "Statistics",
       component: Statistics,
     },
   ],

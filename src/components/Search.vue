@@ -1,8 +1,18 @@
 <template>
-  <div class="control is-flex-grow-1 has-icons-right">
-    <input class="input is-rounded" type="text" placeholder="Search Me" />
-    <span class="icon is-right">
-      <i class="mdi mdi-magnify is-size-4"></i>
-    </span>
+  <div class="input-group full-width">
+    <span class="input-group-addon addon-lg">{{ siriusStore.state.networkType.name }}</span>
+      <input class="form-input input-lg" type="text" :placeholder="'Search ' + siriusStore.state.networkType.name" />
+      <button class="input-group-btn btn btn-lg"><i class="icon icon-search"></i></button>
   </div>
 </template>
+
+<script>
+export default {
+  inject: ["siriusStore"],
+};
+</script>
+
+<style lang="sass" scoped>
+.full-width
+  width: 100%
+</style>

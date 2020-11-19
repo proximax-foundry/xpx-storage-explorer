@@ -24,5 +24,119 @@ h1, h2, h3, h4, h5, h6 {
   font-family: $title-font-family;
 }
 
-@import "../../node_modules/spectre.css/src/spectre.scss";
-@import "../../node_modules/spectre.css/src/spectre-icons.scss";
+$border-radius: 0.3rem !default;
+
+@import "@/../node_modules/spectre.css/src/_variables.scss";
+@import "@/../node_modules/spectre.css/src/_mixins.scss";
+@import "@/../node_modules/spectre.css/src/_normalize.scss";
+@import "@/../node_modules/spectre.css/src/_base.scss";
+@import "@/../node_modules/spectre.css/src/_typography.scss";
+@import "@/../node_modules/spectre.css/src/_asian.scss";
+@import "@/../node_modules/spectre.css/src/_tables.scss";
+@import "@/../node_modules/spectre.css/src/_buttons.scss";
+@import "@/../node_modules/spectre.css/src/_forms.scss";
+@import "@/../node_modules/spectre.css/src/_labels.scss";
+@import "@/../node_modules/spectre.css/src/_codes.scss";
+@import "@/../node_modules/spectre.css/src/_media.scss";
+@import "@/../node_modules/spectre.css/src/_layout.scss";
+@import "@/../node_modules/spectre.css/src/_navbar.scss";
+@import "@/../node_modules/spectre.css/src/_avatars.scss";
+@import "@/../node_modules/spectre.css/src/_cards.scss";
+@import "@/../node_modules/spectre.css/src/_dropdowns.scss";
+@import "@/../node_modules/spectre.css/src/_empty.scss";
+@import "@/../node_modules/spectre.css/src/_menus.scss";
+@import "@/../node_modules/spectre.css/src/_modals.scss";
+@import "@/../node_modules/spectre.css/src/_tiles.scss";
+@import "@/../node_modules/spectre.css/src/_utilities.scss";
+@import "@/../node_modules/spectre.css/src/_animations.scss";
+@import "@/../node_modules/spectre.css/src/spectre-icons.scss";
+
+body {
+  padding-top: $unit-16 + $unit-4;
+}
+
+.navbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  margin: 0 auto;
+  padding: $unit-2 $unit-2;
+  background: $secondary-color-dark;
+  opacity: 0.7;
+  backdrop-filter: blur(6px);
+  z-index: 100;
+
+  .navbar-section {
+    padding: $unit-2 $unit-2;
+  }
+
+  .navbar-center {
+    display: none;
+  }
+}
+
+.navbar-brand {
+  align-items: center;
+  -ms-flex-align: center;
+}
+
+@media (max-width: $size-lg) {
+  .navbar {
+    .navbar-section {
+      &:not(:first-child) {
+        display: none;
+      }
+    }
+
+    .navbar-center {
+      margin: auto;
+      display: block;
+    }
+  }
+}
+
+.footer {
+  bottom: 0;
+  width: 100%;
+  background: $secondary-color-dark;
+  margin-top: $unit-2;
+  padding: $unit-6 $unit-2;
+  .columns {
+    padding: $unit-6 $unit-2;
+  }
+}
+
+@media (max-width: $size-lg) {
+  .table:not(.table-scroll) {
+    &.table-stack {
+      thead th {
+        display: none;
+      }
+
+      tr {
+        border-bottom: $border-width solid $border-color;
+
+        &:first-child {
+          border-top: $border-width solid $border-color;
+        }
+      }
+
+      td,
+      th {
+        border-bottom: 0;
+        display: block;
+
+        &[data-th]::before {
+          content: attr(data-th);
+          display: block;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+.menu {
+  min-width: $control-width-sm;
+}

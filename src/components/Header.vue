@@ -1,38 +1,84 @@
 <template>
-  <nav class="navbar">
+  <nav id="navMenu" class="navbar mb-2 p-2 p-fixed">
     <div class="navbar-section">
-      <a class="navbar-brand mr-2" href="https://proximax.io">
+      <router-link to="/" class="navbar-brand d-inline-flex">
         <img
-          src="https://www.proximax.io/user/themes/proximaxvrs1/images/logo.png"
+          src="@/assets/logo-name.png"
           alt="ProximaX Logo"
-          class="img-responsive"
+          width="150"
         />
-      </a>
+        <div class="divider-vert"></div>
+        <small class="label label-secondary text-bold">{{ appStore.name }} v{{ appStore.version }}</small>
+      </router-link>
     </div>
-    <div class="navbar-section" :class="{ 'is-active': isActive }">
-      <div>
+    <div class="navbar-center">
+      <button class="btn btn-link btn-action btn-lg" href="#navbarModal" @click="$emit('update:modalActive', !modalActive)">
+        <i class="icon icon-menu"></i>
+      </button>
+    </div>
+    <div class="navbar-section">
+      <teleport :disabled="!modalActive" to="#navbarSearch">
         <Search />
-      </div>
-      <div>
-        <SelectNode />
-      </div>
+      </teleport>
+    </div>
+    <div class="navbar-section">
+      <teleport :disabled="!modalActive" to="#navbarEnd">
+        <router-link
+          v-for="route in $router.options.routes.slice(1)"
+          :key="route.path"
+          :to="route.path"
+          active-class="disabled"
+          exact-active-class="text-error"
+          class="btn btn-link mr-1"
+          @click="closeModal"
+        >
+          {{ route.name }}
+        </router-link>
+        <div class="dropdown dropdown-right">
+          <button class="btn btn-link dropdown-toggle" tabindex="0">
+            <i class="icon icon-more-vert"></i>
+          </button>
+          <ul class="menu">
+            <li class="menu-item">
+              <ThemeSwitcher @close-modal="closeModal" />
+            </li>
+            <li class="menu-item">
+              <NodeController @close-modal="closeModal" />
+            </li>
+          </ul>
+        </div>
+      </teleport>
     </div>
   </nav>
 </template>
 <script>
-import { ref } from "vue";
-import SelectNode from "@/components/SelectNode.vue";
+import NodeController from "@/components/NodeController.vue";
 import Search from "@/components/Search.vue";
+import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 
 export default {
   components: {
-    SelectNode,
+    NodeController,
     Search,
+    ThemeSwitcher,
   },
-  setup() {
+  inject: ["appStore"],
+  props: {
+    modalActive: Boolean,
+  },
+  setup(props, { emit }) {
+    const closeModal = () => {
+      if (props.modalActive) {
+        emit("update:modalActive", false);
+      }
+    };
+
     return {
-      isActive: ref(false),
+      closeModal,
     };
   },
 };
 </script>
+
+<style lang="sass" scoped>
+</style>

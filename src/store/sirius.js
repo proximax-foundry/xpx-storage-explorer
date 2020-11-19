@@ -1,9 +1,11 @@
 import { computed, reactive, ref, readonly } from "vue";
-import { BlockHttp, ChainHttp, Deadline, NodeHttp } from "tsjs-xpx-chain-sdk";
+import { BlockHttp, ChainHttp, Listener, NodeHttp } from "tsjs-xpx-chain-sdk";
+import parse from "url-parse";
 
 const config = require("@/../config/config.json");
 
 const currentNode = ref(config.nodes[0]);
+const listenerWS = ref(null);
 
 const state = reactive({
   nodes: config.nodes,
@@ -12,19 +14,44 @@ const state = reactive({
 });
 
 const blockHttp = computed(
-  () => new BlockHttp("http://" + state.selectedNode + ":3000")
+  () => new BlockHttp(state.selectedNode)
 );
 const chainHttp = computed(
-  () => new ChainHttp("https://" + state.selectedNode)
+  () => new ChainHttp(state.selectedNode)
 );
-const nodeHttp = computed(() => new NodeHttp("https://" + state.selectedNode));
+const nodeHttp = computed(() => new NodeHttp(state.selectedNode));
 
-function addNode(newUrl) {
+const wsListener = computed(() => {
+  const url = parse(siriusStore.state.selectedNode, true);
+  listenerWS.value = new Listener(
+    "wss://" + url.hostname + ":443",
+    WebSocket
+  );
+
+  return listenerWS.value;
+});
+
+async function addNode(newUrl) {
   if (config.debug) {
     console.log("addUrl triggered with", newUrl);
   }
 
-  state.nodes.push(newUrl);
+  if (state.nodes.includes(newUrl)) {
+    return -1;
+  }
+
+  const http = new ChainHttp(newUrl);
+  try {
+    await http.getBlockchainHeight().toPromise();
+    state.nodes.push(newUrl);
+    selectNewNode(state.nodes.length - 1);
+    return 1;
+  } catch (e) {
+    if (config.debug) {
+      console.error("addUrl error caught", e);
+    }
+    return 0;
+  }
 }
 
 function selectNewNode(index) {
@@ -32,31 +59,35 @@ function selectNewNode(index) {
     if (config.debug) {
       console.log("updatedNode triggered with invalid index", index);
     }
-    return;
+    return false;
   }
 
   if (config.debug) {
     console.log("updateNode triggered with", state.nodes[index]);
   }
   currentNode.value = state.nodes[index];
+  stopListener();
+  return true;
 }
 
-function getRelativeTimestamp(blockTimestamp) {
+function stopListener() {
   if (config.debug) {
-    console.log("getRelativeTimestamp triggered with", blockTimestamp);
+    console.log("stopListener triggered");
   }
 
-  return new Date(
-    blockTimestamp.compact() + Deadline.timestampNemesisBlock * 1000
-  );
-}
+  if (listenerWS.value != null) {
+    listenerWS.value.terminate();
+    listenerWS.value = null;
+  }
+};
 
 export const siriusStore = readonly({
   state,
   blockHttp,
   chainHttp,
   nodeHttp,
+  wsListener,
   addNode,
   selectNewNode,
-  getRelativeTimestamp,
+  stopListener,
 });

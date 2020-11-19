@@ -227,7 +227,7 @@ export default {
 };
 </script>
 
-<style lang="sass">
+<style lang="sass" scoped>
 @import "https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css"
 
 #map
