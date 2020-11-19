@@ -25,5 +25,6 @@ export default {
   props: {
     modalActive: Boolean,
   },
+  emits: ["update:modalActive"],
 };
 </script>

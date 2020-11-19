@@ -38,6 +38,7 @@ import { inject, ref } from "vue";
 
 export default {
   name: "NodeController",
+  emits: ["close-modal"],
   setup(props, { emit }) {
     const err = ref("");
     const loading = ref(false);

@@ -69,6 +69,7 @@ export default {
   props: {
     modalActive: Boolean,
   },
+  emits: ["update:modalActive"],
   setup(props, { emit }) {
     const closeModal = () => {
       if (props.modalActive) {

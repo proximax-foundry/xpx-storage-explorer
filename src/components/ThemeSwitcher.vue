@@ -14,6 +14,7 @@ import { inject } from "vue";
 
 export default {
   name: "ThemeSwitcher",
+  emits: ["close-modal"],
   setup(props, { emit }) {
     const appStore = inject("appStore");
 
