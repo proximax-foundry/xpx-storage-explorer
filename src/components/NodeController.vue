@@ -2,9 +2,10 @@
   <div class="form-group">
     <select class="form-select" @change="changeNode">
       <option
-        v-for="(item, index) in siriusStore.state.nodes"
-        :key="index"
-        :value="index"
+        v-for="item in siriusStore.state.nodes"
+        :key="item"
+        :selected="item == siriusStore.state.selectedNode"
+        :value="item"
       >
         {{ item }}
       </option>
@@ -20,6 +21,7 @@
         v-model="newUrl"
         type="text"
         class="form-input"
+        :disabled="loading"
         placeholder="Add Node"
       />
       <button
@@ -55,6 +57,7 @@ export default {
       err.value = "";
       const res = await siriusStore.addNode(newUrl.value);
       if (res == 1) {
+        siriusStore.selectNewNode(newUrl.value);
         newUrl.value = "";
         setTimeout(emit("close-modal"), 5000);
       } else if (res == 0) {

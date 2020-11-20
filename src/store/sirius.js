@@ -4,6 +4,7 @@ import parse from "url-parse";
 
 const config = require("@/../config/config.json");
 
+// ALWAYS use function selectNewNode to change currentNode value, to avoid web socket listening on old node
 const currentNode = ref(config.nodes[0]);
 const listenerWS = ref(null);
 
@@ -18,15 +19,20 @@ const chainHttp = computed(() => new ChainHttp(state.selectedNode));
 const nodeHttp = computed(() => new NodeHttp(state.selectedNode));
 
 const wsListener = computed(() => {
-  const url = parse(siriusStore.state.selectedNode, true);
-  listenerWS.value = new Listener("wss://" + url.hostname + ":443", WebSocket);
+  if (listenerWS.value == null) {
+    const url = parse(siriusStore.state.selectedNode, true);
+    listenerWS.value = new Listener(
+      "wss://" + url.hostname + ":443",
+      WebSocket
+    );
+  }
 
   return listenerWS.value;
 });
 
 async function addNode(newUrl) {
   if (config.debug) {
-    console.log("addUrl triggered with", newUrl);
+    console.log("addNode triggered with", newUrl);
   }
 
   if (state.nodes.includes(newUrl)) {
@@ -37,28 +43,27 @@ async function addNode(newUrl) {
   try {
     await http.getBlockchainHeight().toPromise();
     state.nodes.push(newUrl);
-    selectNewNode(state.nodes.length - 1);
     return 1;
-  } catch (e) {
+  } catch (err) {
     if (config.debug) {
-      console.error("addUrl error caught", e);
+      console.error("addNode error caught", err);
     }
     return 0;
   }
 }
 
-function selectNewNode(index) {
-  if (index < 0 || index >= state.nodes.length) {
+function selectNewNode(nodeUrl) {
+  if (state.nodes.indexOf(nodeUrl) == -1) {
     if (config.debug) {
-      console.log("updatedNode triggered with invalid index", index);
+      console.error("selectNewNode triggered with invalid node url", nodeUrl);
     }
     return false;
   }
 
   if (config.debug) {
-    console.log("updateNode triggered with", state.nodes[index]);
+    console.log("selectNewNode triggered with", nodeUrl);
   }
-  currentNode.value = state.nodes[index];
+  currentNode.value = nodeUrl;
   stopListener();
   return true;
 }
