@@ -1,6 +1,9 @@
 <template>
   <div class="form-group">
-    <select class="form-select" @change="changeNode">
+    <select
+      class="form-select"
+      @change="siriusStore.selectNewNode($event.target.value)"
+    >
       <option
         v-for="item in siriusStore.state.nodes"
         :key="item"
@@ -40,17 +43,11 @@ import { inject, ref } from "vue";
 
 export default {
   name: "NodeController",
-  emits: ["close-modal"],
-  setup(props, { emit }) {
+  setup() {
     const err = ref("");
     const loading = ref(false);
     const newUrl = ref("");
     const siriusStore = inject("siriusStore");
-
-    const changeNode = (e) => {
-      siriusStore.selectNewNode(e.target.value);
-      emit("close-modal");
-    };
 
     const addNewNode = async () => {
       loading.value = true;
@@ -59,7 +56,6 @@ export default {
       if (res == 1) {
         siriusStore.selectNewNode(newUrl.value);
         newUrl.value = "";
-        setTimeout(emit("close-modal"), 5000);
       } else if (res == 0) {
         err.value = "Invalid Node";
       } else {
@@ -71,7 +67,6 @@ export default {
 
     return {
       addNewNode,
-      changeNode,
       err,
       loading,
       newUrl,

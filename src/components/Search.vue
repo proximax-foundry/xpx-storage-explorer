@@ -1,5 +1,5 @@
 <template>
-  <div class="input-group full-width">
+  <div class="input-group has-icon-right">
     <span class="input-group-addon addon-lg">{{
       siriusStore.state.networkType.name
     }}</span>
@@ -8,9 +8,7 @@
       type="text"
       :placeholder="'Search ' + siriusStore.state.networkType.name"
     />
-    <button class="input-group-btn btn btn-lg">
-      <i class="icon icon-search"></i>
-    </button>
+    <i class="form-icon icon icon-search"></i>
   </div>
 </template>
 
@@ -20,8 +18,3 @@ export default {
   inject: ["siriusStore"],
 };
 </script>
-
-<style lang="sass" scoped>
-.full-width
-  width: 100%
-</style>

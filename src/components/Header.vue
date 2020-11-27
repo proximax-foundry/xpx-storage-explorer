@@ -1,30 +1,24 @@
 <template>
-  <nav id="navMenu" class="navbar mb-2 p-2 p-fixed">
-    <div class="navbar-section">
-      <router-link to="/" class="navbar-brand d-inline-flex">
-        <img src="@/assets/logo-name.png" alt="ProximaX Logo" width="150" />
-        <div class="divider-vert"></div>
-        <small class="label label-secondary text-bold"
-          >{{ appStore.name }} v{{ appStore.version }}</small
-        >
-      </router-link>
-    </div>
-    <div class="navbar-center">
-      <button
-        class="btn btn-link btn-action btn-lg"
-        href="#navbarModal"
-        @click="$emit('update:modalActive', !modalActive)"
-      >
-        <i class="icon icon-menu"></i>
-      </button>
-    </div>
-    <div class="navbar-section">
-      <teleport :disabled="!modalActive" to="#navbarSearch">
+  <nav class="header">
+    <div class="columns my-2">
+      <div class="column col-auto text-left">
+        <router-link to="/" class="logo d-inline-flex">
+          <img
+            class="img-responsive"
+            src="@/assets/logo-name.png"
+            alt="ProximaX Logo"
+            width="150"
+          />
+          <div class="divider-vert"></div>
+          <small class="label label-secondary text-bold"
+            >{{ appStore.name }} v{{ appStore.version }}</small
+          >
+        </router-link>
+      </div>
+      <div class="column col-md-12">
         <Search />
-      </teleport>
-    </div>
-    <div class="navbar-section">
-      <teleport :disabled="!modalActive" to="#navbarEnd">
+      </div>
+      <div class="column col-lg-12 col-auto text-right">
         <router-link
           v-for="route in $router.options.routes.slice(1)"
           :key="route.path"
@@ -32,28 +26,35 @@
           active-class="disabled"
           exact-active-class="text-error"
           class="btn btn-link mr-1"
-          @click="closeModal"
         >
           {{ route.name }}
         </router-link>
-        <div class="dropdown dropdown-right">
-          <button class="btn btn-link dropdown-toggle" tabindex="0">
+        <div
+          class="dropdown dropdown-right"
+          :class="{ active: optionsMenuActive }"
+        >
+          <button
+            class="btn btn-link dropdown-toggle"
+            tabindex="0"
+            @click="optionsMenuActive = !optionsMenuActive"
+          >
             <i class="icon icon-more-vert"></i>
           </button>
           <ul class="menu">
             <li class="menu-item">
-              <ThemeSwitcher @close-modal="closeModal" />
+              <ThemeSwitcher />
             </li>
             <li class="menu-item">
-              <NodeController @close-modal="closeModal" />
+              <NodeController />
             </li>
           </ul>
         </div>
-      </teleport>
+      </div>
     </div>
   </nav>
 </template>
 <script>
+import { ref } from "vue";
 import NodeController from "@/components/NodeController.vue";
 import Search from "@/components/Search.vue";
 import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
@@ -66,20 +67,40 @@ export default {
     ThemeSwitcher,
   },
   inject: ["appStore"],
-  props: {
-    modalActive: Boolean,
-  },
-  emits: ["update:modalActive"],
-  setup(props, { emit }) {
-    const closeModal = () => {
-      if (props.modalActive) {
-        emit("update:modalActive", false);
-      }
-    };
+  setup() {
+    const optionsMenuActive = ref(false);
 
     return {
-      closeModal,
+      optionsMenuActive,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "@/assets/main";
+
+.header {
+  top: 0;
+  width: 100%;
+  position: sticky;
+  margin-bottom: $unit-2;
+  padding: $unit-2 $unit-2;
+  background: $secondary-color-dark;
+  z-index: 100;
+
+  .column {
+    margin: $unit-2 0;
+    padding: $unit-2 $unit-2;
+  }
+}
+
+.logo {
+  align-items: center;
+  -ms-flex-align: center;
+}
+
+.menu {
+  min-width: $control-width-md;
+}
+</style>

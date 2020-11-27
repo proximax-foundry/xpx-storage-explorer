@@ -1,21 +1,18 @@
 <template>
-  <NavbarModal v-model:modalActive="modalActive" />
   <header>
     <keep-alive>
-      <Header v-model:modalActive="modalActive" />
+      <Header />
     </keep-alive>
   </header>
 
   <section class="container grid-xl full-height">
-    <div class="container">
-      <router-view v-slot="{ Component }">
-        <Susp>
-          <template #default>
-            <component :is="Component" :key="$route.path" />
-          </template>
-        </Susp>
-      </router-view>
-    </div>
+    <router-view v-slot="{ Component }">
+      <Susp>
+        <template #default>
+          <component :is="Component" :key="$route.path" />
+        </template>
+      </Susp>
+    </router-view>
   </section>
 
   <footer>
@@ -24,9 +21,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import Header from "@/components/Header.vue";
-import NavbarModal from "@/components/NavbarModal.vue";
 import Susp from "@/components/SuspenseLoadError.vue";
 import Footer from "@/components/Footer.vue";
 import { siriusStore } from "@/store/sirius";
@@ -35,7 +30,6 @@ import { appStore } from "@/store/app";
 export default {
   name: appStore.name,
   components: {
-    NavbarModal,
     Header,
     Susp,
     Footer,
@@ -44,17 +38,17 @@ export default {
     appStore,
     siriusStore,
   },
-  setup() {
-    return {
-      modalActive: ref(false),
-    };
-  },
 };
 </script>
 
-<style lang="sass">
-@import './assets/main.scss'
+<style lang="scss">
+@import "./assets/main.scss";
 
-.full-height
-  min-height: 100vh
+body {
+  background: $gray-color-light;
+}
+
+.full-height {
+  min-height: 100vh;
+}
 </style>

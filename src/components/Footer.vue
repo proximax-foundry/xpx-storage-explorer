@@ -1,5 +1,5 @@
 <template>
-  <footer class="footer">
+  <div class="footer">
     <div class="columns my-2">
       <div class="column col-mr-auto text-left">
         <div class="btn-group">
@@ -32,15 +32,78 @@
           >
         </div>
       </div>
-      <div class="column col-ml-auto text-right mb-2">
+      <div class="column col-ml-auto col-md-1 text-right mb-2">
         <a class="btn btn-link text-dark" @click="scrollToTop"
-          >Back to top <i class="icon icon-arrow-up ml-2"></i
+          ><span class="hide-md">Back to top </span
+          ><i class="icon icon-arrow-up ml-2"></i
         ></a>
       </div>
     </div>
     <hr />
+    <div class="column col-ml-auto col-md-12 items-right">
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="http://t.me/ProximaXio"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'telegram']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://twitter.com/ProximaXio"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'twitter']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://github.com/proximax-foundry"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'github']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://www.instagram.com/proximaxio"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'instagram']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://www.reddit.com/r/ProximaXOfficial"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'reddit']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://www.facebook.com/ProximaXio"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'facebook']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://medium.com/@proximaxio"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'medium']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://www.youtube.com/channel/UCky9HP0VlqsnGQWrbMPFVnw"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'youtube']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://www.linkedin.com/company/proximaxio"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'linkedin']" size="lg"
+      /></a>
+      <a
+        class="btn btn-link text-dark s-circle"
+        href="https://blockfolio.com/coin/XPX"
+        target="_blank"
+        ><FontAwesomeIcon :icon="['fab', 'btc']" size="lg"
+      /></a>
+    </div>
     <div class="columns my-2">
-      <div class="column col-mr-auto text-left">
+      <div class="column col-mr-auto col-md-12 items-left">
         <div class="text-bold text-small">
           Copyright &copy; {{ thisYear }}. ProximaX <sup>&reg;</sup>. All rights
           reserved.
@@ -64,70 +127,8 @@
           >Cookie Policy</a
         >
       </div>
-      <div class="column col-ml-auto text-right mt-2">
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="http://t.me/ProximaXio"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'telegram']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://twitter.com/ProximaXio"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'twitter']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://github.com/proximax-foundry"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'github']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://www.instagram.com/proximaxio"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'instagram']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://www.reddit.com/r/ProximaXOfficial"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'reddit']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://www.facebook.com/ProximaXio"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'facebook']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://medium.com/@proximaxio"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'medium']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://www.youtube.com/channel/UCky9HP0VlqsnGQWrbMPFVnw"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'youtube']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://www.linkedin.com/company/proximaxio"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'linkedin']" size="lg"
-        /></a>
-        <a
-          class="btn btn-link text-dark s-circle"
-          href="https://blockfolio.com/coin/XPX"
-          target="_blank"
-          ><FontAwesomeIcon :icon="['fab', 'btc']" size="lg"
-        /></a>
-      </div>
     </div>
-  </footer>
+  </div>
 </template>
 
 <script>
@@ -181,3 +182,34 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+@import "@/assets/main";
+
+.footer {
+  width: 100%;
+  margin-top: $unit-2;
+  padding: $unit-6 $unit-2;
+  background: $light-color;
+  .column {
+    padding: $unit-6 $unit-2;
+  }
+}
+
+.items-left {
+  text-align: left;
+}
+
+.items-right {
+  float: right;
+  text-align: right;
+}
+
+@media (max-width: $size-md) {
+  .items-left,
+  .items-right {
+    float: none;
+    text-align: center;
+  }
+}
+</style>

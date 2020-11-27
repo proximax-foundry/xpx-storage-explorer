@@ -3,30 +3,15 @@
     <input
       type="checkbox"
       :checked="appStore.state.darkTheme"
-      @change="themeChange"
+      @change="appStore.toggleDarkTheme()"
     />
     <i class="form-icon"></i> Dark Theme
   </label>
 </template>
 
 <script>
-import { inject } from "vue";
-
 export default {
   name: "ThemeSwitcher",
-  emits: ["close-modal"],
-  setup(props, { emit }) {
-    const appStore = inject("appStore");
-
-    const themeChange = () => {
-      appStore.toggleDarkTheme();
-      emit("close-modal");
-    };
-
-    return {
-      appStore,
-      themeChange,
-    };
-  },
+  inject: ["appStore"],
 };
 </script>
