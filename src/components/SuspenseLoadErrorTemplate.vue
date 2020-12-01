@@ -1,27 +1,27 @@
 <template>
   <template v-if="err">
-    <Error :err="err" />
+    <ErrorState :err="err" />
   </template>
   <Suspense v-else>
     <template #default>
       <slot name="default"></slot>
     </template>
     <template #fallback>
-      <Loading />
+      <LoadingState />
     </template>
   </Suspense>
 </template>
 
 <script>
 import { onErrorCaptured, ref } from "vue";
-import Loading from "@/components/Loading.vue";
-import Error from "@/components/Error.vue";
+import ErrorState from "@/components/ErrorState.vue";
+import LoadingState from "@/components/LoadingState.vue";
 
 export default {
   name: "SuspenseLoadErrorTemplate",
   components: {
-    Loading,
-    Error,
+    ErrorState,
+    LoadingState,
   },
   setup() {
     const err = ref(null);

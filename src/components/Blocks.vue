@@ -1,5 +1,5 @@
 <template>
-  <Error v-if="err" :err="err" />
+  <ErrorState v-if="err" :err="err" />
   <div v-else-if="tableData.length > 0" class="card">
     <div class="card-image">
       <table class="table table-striped table-hover table-stack">
@@ -38,19 +38,19 @@
       </button>
     </div>
   </div>
-  <Loading v-else />
+  <LoadingState v-else />
 </template>
 
 <script>
 import { inject, onUnmounted, reactive, ref, watch } from "vue";
-import Error from "@/components/Error.vue";
-import Loading from "@/components/Loading.vue";
+import ErrorState from "@/components/ErrorState.vue";
+import LoadingState from "@/components/LoadingState.vue";
 
 export default {
   name: "Blocks",
   components: {
-    Error,
-    Loading,
+    ErrorState,
+    LoadingState,
   },
   async setup() {
     const siriusStore = inject("siriusStore");

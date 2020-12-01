@@ -1,30 +1,30 @@
 <template>
   <div class="columns">
     <div class="column col-6">
-      <Susp>
+      <SuspenseTemplate>
         <template #default>
           <LineChart />
         </template>
-      </Susp>
+      </SuspenseTemplate>
     </div>
     <div class="column col-6">
-      <Susp>
+      <SuspenseTemplate>
         <template #default>
           <PieChart />
         </template>
-      </Susp>
+      </SuspenseTemplate>
     </div>
   </div>
 </template>
 
 <script>
 import { defineAsyncComponent } from "vue";
-import Susp from "@/components/SuspenseLoadError.vue";
+import SuspenseTemplate from "@/components/SuspenseLoadErrorTemplate.vue";
 
 export default {
   name: "Statistics",
   components: {
-    Susp,
+    SuspenseTemplate,
     LineChart: defineAsyncComponent(() =>
       import("@/components/LineChart.vue" /* webpackChunkName: "lineChart" */)
     ),

@@ -1,38 +1,42 @@
 <template>
   <header>
-    <keep-alive>
-      <Header />
-    </keep-alive>
+    <section class="container grid-xl">
+      <keep-alive>
+        <AppHeader />
+      </keep-alive>
+    </section>
   </header>
 
   <section class="container grid-xl full-height">
     <router-view v-slot="{ Component }">
-      <Susp>
+      <SuspenseTemplate>
         <template #default>
           <component :is="Component" :key="$route.path" />
         </template>
-      </Susp>
+      </SuspenseTemplate>
     </router-view>
   </section>
 
   <footer>
-    <Footer />
+    <section class="container grid-xl">
+      <AppFooter />
+    </section>
   </footer>
 </template>
 
 <script>
-import Header from "@/components/Header.vue";
-import Susp from "@/components/SuspenseLoadError.vue";
-import Footer from "@/components/Footer.vue";
-import { siriusStore } from "@/store/sirius";
 import { appStore } from "@/store/app";
+import { siriusStore } from "@/store/sirius";
+import AppFooter from "@/components/AppFooter.vue";
+import AppHeader from "@/components/AppHeader.vue";
+import SuspenseTemplate from "@/components/SuspenseLoadErrorTemplate.vue";
 
 export default {
   name: appStore.name,
   components: {
-    Header,
-    Susp,
-    Footer,
+    AppFooter,
+    AppHeader,
+    SuspenseTemplate,
   },
   provide: {
     appStore,
@@ -44,8 +48,19 @@ export default {
 <style lang="scss">
 @import "./assets/main.scss";
 
-body {
+#app {
+  min-width: $size-sm;
   background: $gray-color-light;
+}
+
+header {
+  background: $secondary-color-dark;
+  margin-bottom: $unit-2;
+}
+
+footer {
+  background: $light-color;
+  margin-top: $unit-2;
 }
 
 .full-height {

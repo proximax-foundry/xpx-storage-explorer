@@ -9,6 +9,6 @@
 
 <script>
 export default {
-  name: "Loading",
+  name: "LoadingState",
 };
 </script>

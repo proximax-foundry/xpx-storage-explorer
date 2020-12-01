@@ -1,28 +1,28 @@
 <template>
   <div class="column col-12">
-    <Susp>
+    <SuspenseTemplate>
       <template #default>
         <NodeInfo />
       </template>
-    </Susp>
+    </SuspenseTemplate>
   </div>
   <div class="column col-12">
-    <Susp>
+    <SuspenseTemplate>
       <template #default>
         <Blocks />
       </template>
-    </Susp>
+    </SuspenseTemplate>
   </div>
 </template>
 
 <script>
 import { defineAsyncComponent } from "vue";
-import Susp from "@/components/SuspenseLoadError.vue";
+import SuspenseTemplate from "@/components/SuspenseLoadErrorTemplate.vue";
 
 export default {
   name: "Home",
   components: {
-    Susp,
+    SuspenseTemplate,
     NodeInfo: defineAsyncComponent(() =>
       import("@/components/NodeInfo.vue" /* webpackChunkName: "nodeInfo" */)
     ),

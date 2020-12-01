@@ -3,15 +3,18 @@
     <div class="empty-icon text-error">
       <i class="icon icon-3x icon-stop"></i>
     </div>
-    <div class="empty=title h1">{{ error }}</div>
+    <div class="empty-title h1">{{ error }}</div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "Error",
+  name: "ErrorState",
   props: {
-    err: String,
+    err: {
+      type: String,
+      default: "Error communicating with selected node",
+    },
   },
   setup(props) {
     return {

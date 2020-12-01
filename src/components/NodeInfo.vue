@@ -42,17 +42,17 @@
       </div>
     </div>
   </div>
-  <Loading v-else />
+  <LoadingState v-else />
 </template>
 
 <script>
 import { inject, ref, watch } from "vue";
-import Loading from "@/components/Loading.vue";
+import LoadingState from "@/components/LoadingState.vue";
 
 export default {
   name: "NodeInfo",
   components: {
-    Loading,
+    LoadingState,
   },
   async setup() {
     const info = ref(null);
