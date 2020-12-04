@@ -117,7 +117,7 @@ export default {
       try {
         const nodeDetail = await axios.get("mock/testnet1.dfms.io.json");
         const ipDetail = await axios.get(
-          "http://geolocation-db.com/json/testnet1.dfms.io"
+          "https://geolocation-db.com/json/testnet1.dfms.io"
         );
 
         map.value = new mapboxgl.Map({
@@ -135,7 +135,7 @@ export default {
       peers.value.data.Peers.forEach(async (peer) => {
         const peerDetail = peer.Addrs[0].split("/");
         const ipDetail = await axios.get(
-          `http://geolocation-db.com/json/${peerDetail[2]}`
+          `https://geolocation-db.com/json/${peerDetail[2]}`
         );
         pushData(peer.ID, peerDetail[2], ipDetail.data);
       });

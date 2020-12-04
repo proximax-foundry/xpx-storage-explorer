@@ -1,6 +1,6 @@
 {
   "name": "xpx-storage-explorer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "ProximaX Storage Explorer for community",
   "private": true,
   "scripts": {

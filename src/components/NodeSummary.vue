@@ -53,7 +53,7 @@ export default {
     for (var i = 0; i < 5; i++) {
       const peerDetail = peers.data.Peers[i].Addrs[0].split("/");
       const ipDetail = await axios.get(
-        `http://geolocation-db.com/json/${peerDetail[2]}`
+        `https://geolocation-db.com/json/${peerDetail[2]}`
       );
       if (ipDetail.data.IPv4 == "Not found") {
         ipDetail.data.IPv4 = peerDetail[2];
