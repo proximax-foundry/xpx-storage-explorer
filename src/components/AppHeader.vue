@@ -71,18 +71,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/main";
-@import "spectre.css/src/_menus";
-@import "spectre.css/src/_dropdowns";
-
-.btn {
-  &.btn-link {
-    &:focus,
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
+@import "spectre.css/src/variables";
 
 .column {
   margin: $unit-2 0;

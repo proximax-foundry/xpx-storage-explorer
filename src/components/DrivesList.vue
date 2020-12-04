@@ -76,9 +76,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/main";
+@import "spectre.css/src/variables";
 @import "spectre.css/src/mixins/shadow";
-@import "spectre.css/src/_tiles";
+@import "spectre.css/src/mixins/text";
+@import "spectre.css/src/tiles";
 
 .tile {
   @include shadow-variant($unit-o);

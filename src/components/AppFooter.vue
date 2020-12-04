@@ -181,7 +181,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/main";
+@import "spectre.css/src/variables";
 
 .btn {
   &.btn-link {
@@ -190,7 +190,6 @@ export default {
     &:focus,
     &:hover {
       color: $gray-color-dark;
-      text-decoration: underline;
     }
   }
 }

@@ -130,7 +130,6 @@ export default {
         pushData(nodeDetail.data.ID, "testnet1.dfms.io", ipDetail.data);
       } catch (err) {
         console.error("Geo Location DB Error", err);
-        throw "Cannot connect to current node";
       }
       peers.value.data.Peers.forEach(async (peer) => {
         const peerDetail = peer.Addrs[0].split("/");
@@ -150,26 +149,30 @@ export default {
 };
 </script>
 
-<style lang="sass" scoped>
-@import "https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css"
+<style lang="scss" scoped>
+@import "https://api.mapbox.com/mapbox-gl-js/v1.12.0/mapbox-gl.css";
 
-#map
-  position: relative
-  top: 0
-  bottom: 0
-  width: 100%
-  height: 480px
+#map {
+  position: relative;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  height: 480px;
+}
 
-.marker
-  display: block
-  border: none
-  border-radius: 50%
-  padding: 0
+.marker {
+  display: block;
+  border: none;
+  border-radius: 50%;
+  padding: 0;
+}
 
-.node-table-move
-  transition: all 1s ease
+.node-table-move {
+  transition: all 1s ease;
+}
 
-.node-table-enter-from
-  opacity: 0
-  transform: translateY(30px)
+.node-table-enter-from {
+  opacity: 0;
+  transform: translateY(30px);
+}
 </style>

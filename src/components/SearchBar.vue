@@ -27,7 +27,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/main";
+@import "spectre.css/src/variables";
 @import "spectre.css/src/mixins/shadow";
 
 .input-group {

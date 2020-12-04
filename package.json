@@ -1,7 +1,7 @@
 {
   "name": "xpx-storage-explorer",
-  "version": "0.1.1",
-  "description": "ProximaX Storage Explorer for community",
+  "version": "0.1.2",
+  "description": "ProximaX Sirius Storage Explorer for community",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
@@ -16,6 +16,7 @@
   },
   "keywords": [
     "proximax",
+    "sirius",
     "xpx",
     "storage",
     "explorer"

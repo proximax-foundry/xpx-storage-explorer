@@ -13,7 +13,7 @@ const router = createRouter({
       name: "Overview",
       component: MainOverview,
       meta: {
-        title: `${appStore.name} - Main Overview`,
+        title: "Main Overview",
       },
     },
     {
@@ -21,7 +21,7 @@ const router = createRouter({
       name: "Nodes",
       component: NodesOverview,
       meta: {
-        title: `${appStore.name} - Nodes Overview`,
+        title: "Nodes Overview",
       },
     },
     {
@@ -29,7 +29,7 @@ const router = createRouter({
       name: "Drives",
       component: DrivesOverview,
       meta: {
-        title: `${appStore.name} - Drives Overview`,
+        title: "Drives Overview",
       },
     },
   ],
@@ -37,7 +37,8 @@ const router = createRouter({
 
 router.afterEach((to) => {
   nextTick(() => {
-    document.title = to.meta.title || `${appStore.name} - to.name`;
+    document.title = `ProximaX Sirius ${appStore.name} -
+      ${to.meta.title ? to.meta.title : to.name}`;
   });
 });
 

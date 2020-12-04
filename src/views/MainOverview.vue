@@ -77,7 +77,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "@/assets/main";
+@import "spectre.css/src/variables";
 
 .column {
   margin: $unit-6 0;

@@ -27,7 +27,8 @@ export default {
     const err = ref(null);
 
     onErrorCaptured((e) => {
-      err.value = e;
+      console.error("Error Captured Suspense Template", e);
+      err.value = "An error has occured, please try a new node";
       return true;
     });
 

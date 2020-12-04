@@ -3,7 +3,7 @@ import { reactive, readonly } from "vue";
 const config = require("@/../config/config.json");
 
 const coreVersion = require("@/../package.json").version;
-const name = "ProximaX Sirius Storage Explorer";
+const name = "Storage Explorer";
 const state = reactive({
   darkTheme: false,
 });
