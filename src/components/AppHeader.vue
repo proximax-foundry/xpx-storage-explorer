@@ -72,6 +72,9 @@ export default {
 
 <style lang="scss" scoped>
 @import "spectre.css/src/variables";
+@import "spectre.css/src/mixins/shadow";
+@import "spectre.css/src/menus";
+@import "spectre.css/src/dropdowns";
 
 .column {
   margin: $unit-2 0;

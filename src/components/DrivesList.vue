@@ -18,35 +18,50 @@
     </div>
     <div class="tile-content">
       <div class="tile-title h5">{{ item.drive.substr(0, 15) }}...</div>
-      <div class="tile-subtitle text-gray">
-        Owner
-        {{ item.owner.substr(0, 15) }}...
+      <div class="tile-subtitle text-small">
+        Owner:
+        <b>{{ item.owner.substr(0, 15) }}...</b>
       </div>
     </div>
     <div class="tile-content">
       <div class="tile-title">
-        Billing Price
-        {{ item.billingPrice }} SO
+        Storage Used:
+        <b>{{ $filters.bytesToSize(item.spaceUsed) }}</b>
       </div>
       <div class="tile=subtitle">
-        Billing Period
-        {{ item.billingPeriod }}
-        {{ item.billingPeriod > 1 ? "Blocks" : "Block" }}
+        Expiry:
+        <b>{{
+          item.duration > 0 ? item.created + item.duration : "No Expiry"
+        }}</b>
       </div>
     </div>
     <div class="tile-content">
       <div class="tile-title">
-        Replicas
-        {{ item.replicas }}
+        Billing Price:
+        <b>{{ item.billingPrice }} SO</b>
       </div>
-      <div class="tile-subtitle">
-        Percent Approvers
-        {{ item.percentApprovers }} %
+      <div class="tile=subtitle">
+        Billing Period:
+        <b>{{ item.billingPeriod }} Block(s)</b>
       </div>
     </div>
-    <div class="tile-action">
-      Storage<br />
-      {{ item.space }} MB
+    <div class="tile-content">
+      <div class="tile-title">
+        Replicas:
+        <b>{{ item.replicas }}</b>
+      </div>
+      <div class="tile-subtitle">
+        Approvers:
+        <b>{{ item.percentApprovers }} %</b>
+      </div>
+    </div>
+    <div class="tile-action text-center mx-2">
+      <div class="tile-title h5">{{ item.folders }}</div>
+      <div class="tile-subtitle text-small">Folder(s)</div>
+    </div>
+    <div class="tile-action text-center mx-2">
+      <div class="tile-title h5">{{ item.files }}</div>
+      <div class="tile-subtitle text-small">File(s)</div>
     </div>
   </div>
 </template>
@@ -65,6 +80,24 @@ export default {
       const driveDetail = await axios.get(
         `mock/testnet1.dfms.io/${contractKey}.json`
       );
+
+      driveDetail.data.Contract.spaceUsed = 0;
+      driveDetail.data.Contract.files = 0;
+      driveDetail.data.Contract.folders = 0;
+      if (driveDetail.data.List) {
+        driveDetail.data.List.forEach((item) => {
+          if (item.Type == "dir") {
+            driveDetail.data.Contract.folders++;
+          } else {
+            driveDetail.data.Contract.files++;
+          }
+
+          if (item.Size != 0) {
+            driveDetail.data.Contract.spaceUsed += item.Size;
+          }
+        });
+      }
+
       driveDetails.value.push(driveDetail.data.Contract);
     });
 

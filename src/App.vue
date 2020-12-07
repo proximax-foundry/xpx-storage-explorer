@@ -65,8 +65,6 @@ export default {
 @import "spectre.css/src/layout";
 @import "spectre.css/src/cards";
 @import "spectre.css/src/empty";
-@import "spectre.css/src/menus";
-@import "spectre.css/src/dropdowns";
 @import "spectre.css/src/utilities";
 @import "spectre.css/src/animations";
 @import "spectre.css/src/spectre-icons";
