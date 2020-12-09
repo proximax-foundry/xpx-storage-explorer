@@ -17,7 +17,13 @@
       <span v-else class="label label-rounded label-success">&nbsp;</span>
     </div>
     <div class="tile-content">
-      <div class="tile-title h5">{{ item.drive.substr(0, 15) }}...</div>
+      <div class="tile-title h5">
+        <router-link
+          :to="{ name: 'Drive Details', params: { cid: item.drive } }"
+        >
+          {{ item.drive.substr(0, 15) }}...
+        </router-link>
+      </div>
       <div class="tile-subtitle text-small">
         Owner:
         <b>{{ item.owner.substr(0, 15) }}...</b>

@@ -1,9 +1,12 @@
 import { nextTick } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { appStore } from "@/store/app";
-import MainOverview from "@/views/MainOverview.vue";
-import NodesOverview from "@/views/NodesOverview.vue";
-import DrivesOverview from "@/views/DrivesOverview.vue";
+
+const MainOverview = () => import("@/views/MainOverview.vue");
+const NodesOverview = () => import("@/views/NodesOverview.vue");
+const DriveLayout = () => import("@/views/DriveLayout.vue");
+const DrivesList = () => import("@/components/DrivesList.vue");
+const DriveState = () => import("@/components/DriveState.vue");
 
 const router = createRouter({
   history: createWebHistory(),
@@ -27,10 +30,19 @@ const router = createRouter({
     {
       path: "/drives",
       name: "Drives",
-      component: DrivesOverview,
-      meta: {
-        title: "Drives Overview",
-      },
+      component: DriveLayout,
+      children: [
+        {
+          path: "",
+          name: "Drives Overview",
+          component: DrivesList,
+        },
+        {
+          path: ":cid",
+          name: "Drive Details",
+          component: DriveState,
+        },
+      ],
     },
   ],
 });
