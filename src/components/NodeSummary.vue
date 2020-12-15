@@ -1,6 +1,6 @@
 <template>
   <div class="text-center">
-    <h3>Nodes / Host</h3>
+    <h3>Nodes</h3>
     <router-link to="/nodes" class="btn btn-link"> View All </router-link>
   </div>
   <table class="table table-hover table-stack">
@@ -15,7 +15,13 @@
     </thead>
     <tbody>
       <tr v-for="item in nodeDetails" :key="item.Id">
-        <td data-th="Id">{{ item.id }}</td>
+        <td data-th="Id">
+          <router-link
+            :to="{ name: 'Node Details', params: { nodeId: item.id } }"
+          >
+            {{ item.id }}
+          </router-link>
+        </td>
         <td data-th="IP">{{ item.details.IPv4 }}</td>
         <td data-th="Country">
           {{
@@ -33,7 +39,12 @@
           <span v-else class="label label-success">Online</span>
         </td>
         <td class="text-center">
-          <button class="btn">More</button>
+          <router-link
+            :to="{ name: 'Node Details', params: { nodeId: item.id } }"
+            class="btn"
+          >
+            More
+          </router-link>
         </td>
       </tr>
     </tbody>

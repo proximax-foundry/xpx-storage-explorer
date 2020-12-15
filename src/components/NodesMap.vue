@@ -26,7 +26,13 @@
                 : null
             "
           >
-            <td data-th="ID">{{ item.id }}</td>
+            <td data-th="ID">
+              <router-link
+                :to="{ name: 'Node Details', params: { nodeId: item.id } }"
+              >
+                {{ item.id }}
+              </router-link>
+            </td>
             <td data-th="Host">{{ item.details.IPv4 }}</td>
             <td data-th="Location">
               {{
