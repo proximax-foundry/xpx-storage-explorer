@@ -22,13 +22,13 @@
         <div v-else class="label label-rounded label-success">Active</div>
         <div class="card-title h5">
           <router-link
-            :to="{ name: 'Drive Details', params: { cid: item.drive } }"
+            :to="{ name: 'Drive Details', params: { cid: [item.drive] } }"
           >
             {{ item.drive.substr(0, 15) }}...
           </router-link>
         </div>
         <div class="card-subtitle text-gray">
-          Created at Block&nbsp;{{ item.created }}
+          Created at Block {{ item.created }}
         </div>
       </div>
       <div class="card-body">
@@ -83,7 +83,12 @@
         </table>
       </div>
       <div class="card-footer text-center">
-        <button class="btn">More</button>
+        <router-link
+          :to="{ name: 'Drive Details', params: { cid: [item.drive] } }"
+          class="btn"
+        >
+          More
+        </router-link>
       </div>
     </div>
   </div>

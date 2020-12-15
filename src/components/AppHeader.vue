@@ -19,8 +19,8 @@
         v-for="route in $router.options.routes"
         :key="route.path"
         :to="route.path"
-        active-class="disabled"
-        exact-active-class="text-muted"
+        active-class="text-muted"
+        exact-active-class="disabled"
         class="btn btn-link mr-1"
       >
         {{ route.name }}

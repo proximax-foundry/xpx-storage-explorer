@@ -5,21 +5,20 @@
     class="tile tile-centered"
   >
     <div class="tile-icon p-2">
-      <span v-if="item.replicas == 0" class="label label-rounded label-error">
-        &nbsp;
-      </span>
-      <span
-        v-else-if="item.replicas < item.minReplicators"
-        class="label label-rounded label-warning"
-      >
-        &nbsp;
-      </span>
-      <span v-else class="label label-rounded label-success">&nbsp;</span>
+      <figure class="avatar">
+        <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
+        <i v-if="item.replicas == 0" class="avatar-presence busy"></i>
+        <i
+          v-else-if="item.replicas < item.minReplicators"
+          class="avatar-presence away"
+        ></i>
+        <i v-else class="avatar-presence online"></i>
+      </figure>
     </div>
     <div class="tile-content">
       <div class="tile-title h5">
         <router-link
-          :to="{ name: 'Drive Details', params: { cid: item.drive } }"
+          :to="{ name: 'Drive Details', params: { cid: [item.drive] } }"
         >
           {{ item.drive.substr(0, 15) }}...
         </router-link>
@@ -73,11 +72,19 @@
 </template>
 
 <script>
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faHdd } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { ref } from "vue";
 import axios from "axios";
 
+library.add(faHdd);
+
 export default {
   name: "DrivesList",
+  components: {
+    FontAwesomeIcon,
+  },
   async setup() {
     const driveDetails = ref([]);
 
@@ -118,7 +125,9 @@ export default {
 @import "spectre.css/src/variables";
 @import "spectre.css/src/mixins/shadow";
 @import "spectre.css/src/mixins/text";
+@import "spectre.css/src/mixins/avatar";
 @import "spectre.css/src/tiles";
+@import "spectre.css/src/avatars";
 
 .tile {
   @include shadow-variant($unit-o);

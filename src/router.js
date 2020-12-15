@@ -38,7 +38,7 @@ const router = createRouter({
           component: DrivesList,
         },
         {
-          path: ":cid",
+          path: ":cid+",
           name: "Drive Details",
           component: DriveState,
         },

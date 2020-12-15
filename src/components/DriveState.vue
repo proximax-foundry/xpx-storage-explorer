@@ -1,14 +1,23 @@
 <template>
   <ul class="breadcrumb my-2">
-    <li class="breadcrumb-item">
-      <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" />&nbsp;
+    <li
+      v-for="(item, index) in $route.params.cid"
+      :key="item"
+      class="breadcrumb-item"
+    >
+      <FontAwesomeIcon
+        v-if="index == 0"
+        :icon="['fas', 'hdd']"
+        size="lg"
+        class="mr-2"
+      />
       <router-link
         :to="{
           name: 'Drive Details',
-          params: { cid: driveDetails.drive },
+          params: { cid: $route.params.cid.slice(0, index + 1) },
         }"
       >
-        {{ driveDetails.drive.substr(0, 15) }}
+        {{ item.substr(0, 15) }}
       </router-link>
     </li>
   </ul>
@@ -41,7 +50,16 @@
       class="column card mb-2 mr-2 p-0"
     >
       <div class="card-header">
-        <div class="card-title h5">{{ item.Name }}</div>
+        <div class="card-title h5">
+          <router-link
+            :to="{
+              name: 'Drive Details',
+              params: { cid: $route.params.cid.concat(item.Name) },
+            }"
+          >
+            {{ item.Name }}
+          </router-link>
+        </div>
       </div>
       <div class="card-body">
         <div>Cid:</div>
@@ -57,12 +75,29 @@
       class="column card mb-2 mr-2 p-0"
     >
       <div class="card-header">
-        <div class="card-title h5">{{ item.Name }}</div>
+        <div class="card-title h5">
+          <router-link
+            :to="{
+              name: 'Drive Details',
+              params: { cid: $route.params.cid.concat(item.Name) },
+            }"
+          >
+            {{ item.Name }}
+          </router-link>
+        </div>
       </div>
       <div class="card-body">
         <div>Cid:</div>
         <div class="text-bold">{{ item.Cid["/"] }}</div>
       </div>
+    </div>
+  </div>
+  <div
+    v-if="driveDetails.Files.length == 0 && driveDetails.Folders.length == 0"
+    class="columns mx-2"
+  >
+    <div class="column empty">
+      <div class="empty-title h5">No Folders or Files</div>
     </div>
   </div>
 </template>
@@ -85,26 +120,37 @@ export default {
   async setup() {
     const route = useRoute();
     const driveDetails = ref(null);
+    const reducer = (accumulator, currentValue) =>
+      accumulator + `/${currentValue}`;
 
     const driveData = await axios.get(
-      `/mock/testnet1.dfms.io/${route.params.cid}.json`
+      `/mock/testnet1.dfms.io/${route.params.cid[0]}.json`
     );
 
     const files = new Array();
     const folders = new Array();
-    if (driveData.data.list) {
-      driveData.data.list.forEach((driveItem) => {
-        driveData.data.List.forEach((item) => {
-          if (item.Name == driveItem) {
-            if (item.Type == "file") {
-              files.push(item);
-            } else {
-              folders.push(item);
+
+    try {
+      const locationData = await axios.get(
+        `/mock/testnet1.dfms.io/${route.params.cid.reduce(reducer)}.json`
+      );
+
+      if (locationData.data.list) {
+        locationData.data.list.forEach((driveItem) => {
+          driveData.data.List.forEach((item) => {
+            if (item.Name == driveItem) {
+              if (item.Type == "file") {
+                files.push(item);
+              } else {
+                folders.push(item);
+              }
+              return;
             }
-            return;
-          }
+          });
         });
-      });
+      }
+    } catch (e) {
+      console.error("Location Data Not Found", e);
     }
 
     driveDetails.value = driveData.data.Contract;
