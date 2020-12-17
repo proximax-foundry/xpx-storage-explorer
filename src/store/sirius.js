@@ -1,50 +1,51 @@
 import { computed, reactive, ref, readonly } from "vue";
 import { BlockHttp, ChainHttp, Listener, NodeHttp } from "tsjs-xpx-chain-sdk";
-import parse from "url-parse";
+// import parse from "url-parse";
 
 const config = require("@/../config/config.json");
 
 // ALWAYS use function selectNewNode to change currentNode value, to avoid web socket listening on old node
-const currentNode = ref(config.nodes[0]);
+const currentNode = ref(config.blockchainNodes[0]);
 const listenerWS = ref(null);
 
 const state = reactive({
-  nodes: config.nodes,
+  nodes: config.blockchainNodes,
   networkType: config.networkType,
   selectedNode: computed(() => currentNode.value),
 });
 
-const blockHttp = computed(() => new BlockHttp(state.selectedNode));
-const chainHttp = computed(() => new ChainHttp(state.selectedNode));
-const nodeHttp = computed(() => new NodeHttp(state.selectedNode));
+const blockHttp = computed(() => new BlockHttp(parseNodeConfig(state.selectedNode)));
+const chainHttp = computed(() => new ChainHttp(parseNodeConfig(state.selectedNode)));
+const nodeHttp = computed(() => new NodeHttp(parseNodeConfig(state.selectedNode)));
 
 const wsListener = computed(() => {
   if (listenerWS.value == null) {
-    const url = parse(siriusStore.state.selectedNode, true);
+    const node = siriusStore.state.selectedNode
     listenerWS.value = new Listener(
-      `${url.protocol.startsWith("https") ? "wss://" : "ws://"}${url.hostname}${
-        url.port ? ":" + url.port : ""
-      }`,
+      `${node.protocol.startsWith("http") ? "ws://" : "wss://"}${node.hostname}:${node.port}`,
       WebSocket
-    );
+    )
   }
 
   return listenerWS.value;
 });
 
-async function addNode(newUrl) {
+async function addNode(nodeConfigString) {
+  const nodeConfig = JSON.parse(nodeConfigString)
   if (config.debug) {
-    console.log("addNode triggered with", newUrl);
+    console.log("addNode triggered with", nodeConfig.hostname);
   }
 
-  if (state.nodes.includes(newUrl)) {
-    return -1;
-  }
+  // if (state.nodes.includes(node)) {
+  //   return -1;
+  // }
 
-  const http = new ChainHttp(newUrl);
+  const node = parseNodeConfig(nodeConfig)
+
+  const http = new ChainHttp(node);
   try {
     await http.getBlockchainHeight().toPromise();
-    state.nodes.push(newUrl);
+    state.nodes.push(nodeConfig);
     return 1;
   } catch (err) {
     if (config.debug) {
@@ -54,18 +55,19 @@ async function addNode(newUrl) {
   }
 }
 
-function selectNewNode(nodeUrl) {
-  if (state.nodes.indexOf(nodeUrl) == -1) {
-    if (config.debug) {
-      console.error("selectNewNode triggered with invalid node url", nodeUrl);
-    }
-    return false;
-  }
+function selectNewNode(nodeConfigString) {
+  const nodeConfig = JSON.parse(nodeConfigString)
+  // if (state.nodes.indexOf(nodeConfig) == -1) {
+  //   if (config.debug) {
+  //     console.error("selectNewNode triggered with invalid node url", nodeConfig.hostname);
+  //   }
+  //   return false;
+  // }
 
   if (config.debug) {
-    console.log("selectNewNode triggered with", nodeUrl);
+    console.log("selectNewNode triggered with", nodeConfig.hostname);
   }
-  currentNode.value = nodeUrl;
+  currentNode.value = nodeConfig;
   stopListener();
   return true;
 }
@@ -79,6 +81,12 @@ function stopListener() {
     listenerWS.value.terminate();
     listenerWS.value = null;
   }
+}
+
+function parseNodeConfig(nodeConfig) {
+  return (
+    nodeConfig.protocol + "://" + nodeConfig.hostname + ":" + nodeConfig.port
+  );
 }
 
 export const siriusStore = readonly({

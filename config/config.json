@@ -1,9 +1,20 @@
 {
-  "nodes": [
-    "http://bctestnet3.brimstone.xpxsirius.io:3000",
-    "http://bctestnet2.brimstone.xpxsirius.io:3000",
-    "http://bctestnet1.brimstone.xpxsirius.io:3000",
-    "http://bctestnet4.brimstone.xpxsirius.io:3000"
+  "blockchainNodes": [
+    {
+      "protocol": "http",
+      "hostname": "bctestnet3.brimstone.xpxsirius.io",
+      "port": 3000
+    },
+    {
+      "protocol": "http",
+      "hostname": "bctestnet2.brimstone.xpxsirius.io",
+      "port": 3000
+    },
+    {
+      "protocol": "http",
+      "hostname": "bctestnet2.brimstone.xpxsirius.io",
+      "port": 3000
+    }
   ],
   "networkType": {
     "name": "Public Testnet",

@@ -1,16 +1,28 @@
 import { siriusStore } from "@/store/sirius";
 
+var workingNodeConfig = {};
+workingNodeConfig["protocol"] = "http"
+workingNodeConfig["hostname"] = "arcturus.xpxsirius.io"
+workingNodeConfig["port"] = 3000
+const workingNodeConfigString = JSON.stringify(workingNodeConfig)
+
+var invalidNodeConfig = {};
+invalidNodeConfig["protocol"] = "http"
+invalidNodeConfig["hostname"] = "fake.xpxsirius.io"
+invalidNodeConfig["port"] = 3000
+const invalidNodeConfigString = JSON.stringify(invalidNodeConfig)
+
 describe("add working node", () => {
   it("returns 1", async () => {
-    const res = await siriusStore.addNode("https://arcturus.xpxsirius.io");
+    const res = await siriusStore.addNode(workingNodeConfigString);
     expect(res).toBe(1);
   });
 });
 
 describe("add duplicate node", () => {
   it("returns -1", async () => {
-    await siriusStore.addNode("https://arcturus.xpxsirius.io");
-    const res = await siriusStore.addNode("https://arcturus.xpxsirius.io");
+    await siriusStore.addNode(workingNodeConfigString);
+    const res = await siriusStore.addNode(workingNodeConfigString);
     expect(res).toBe(-1);
   });
 });
@@ -29,7 +41,7 @@ describe("add duplicate node", () => {
 describe("change to working node", () => {
   it("returns true", async () => {
     const res = await siriusStore.selectNewNode(
-      "https://arcturus.xpxsirius.io"
+      workingNodeConfigString
     );
     expect(res).toBeTruthy();
   });
@@ -37,7 +49,7 @@ describe("change to working node", () => {
 
 describe("change to non-existing node", () => {
   it("returns false", async () => {
-    const res = await siriusStore.selectNewNode("https://fake.xpxsirius.io");
+    const res = await siriusStore.selectNewNode(invalidNodeConfigString);
     expect(res).toBeFalsy();
   });
 });
