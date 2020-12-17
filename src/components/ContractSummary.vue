@@ -34,10 +34,13 @@ export default {
     const drives = ref(0);
     const nodes = ref(0);
 
-    let resp = await axios.get("mock/testnet1.dfms.io.json");
-    drives.value = resp.data.drives.length;
-    resp = await axios.get("mock/testnet1.dfms.io/peers.json");
-    nodes.value = resp.data.Peers.length;
+    const resp = await Promise.all([
+      axios.get("http://testnet1.dfms.io:6366/api/v1/contract/ls"),
+      axios.get("http://testnet1.dfms.io:6366/api/v1/net/peers"),
+    ]);
+
+    drives.value = resp[0].data.Ids.length;
+    nodes.value = resp[1].data.Peers.length;
 
     return {
       drives,

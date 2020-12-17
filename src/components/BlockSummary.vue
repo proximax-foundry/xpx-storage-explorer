@@ -131,7 +131,6 @@ export default {
     return {
       blockInfo,
       isLoading,
-      siriusStore,
       timeElapsed,
     };
   },

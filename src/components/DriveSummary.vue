@@ -69,7 +69,7 @@
             </tr>
             <tr>
               <td class="text-bold">Storage</td>
-              <td>{{ item.space }} MB</td>
+              <td>{{ $filters.bytesToSize(item.space) }}</td>
             </tr>
             <tr>
               <td class="text-bold">Root</td>
@@ -103,12 +103,15 @@ export default {
   async setup() {
     const driveDetails = ref([]);
 
-    const drives = await axios.get("mock/testnet1.dfms.io.json");
-    drives.data.drives.forEach(async (contractKey) => {
-      const driveDetail = await axios.get(
-        `mock/testnet1.dfms.io/${contractKey}.json`
+    const drives = await axios.get(
+      "http://testnet1.dfms.io:6366/api/v1/contract/ls"
+    );
+    drives.data.Ids.forEach(async (id) => {
+      const resp = await axios.get(
+        `http://testnet1.dfms.io:6366/api/v1/contract/get?arg=${id}`
       );
-      driveDetails.value.push(driveDetail.data.Contract);
+
+      driveDetails.value.push(resp.data.Contract);
     });
 
     return {

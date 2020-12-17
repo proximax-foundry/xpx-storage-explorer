@@ -120,40 +120,35 @@ export default {
   async setup() {
     const route = useRoute();
     const driveDetails = ref(null);
-    const reducer = (accumulator, currentValue) =>
-      accumulator + `/${currentValue}`;
+    const removeDrivePath = (accumulator, currentValue, currentIndex) =>
+      currentIndex == 1 ? currentValue : accumulator + `/${currentValue}`;
 
-    const driveData = await axios.get(
-      `/mock/testnet1.dfms.io/${route.params.cid[0]}.json`
+    const contractData = await axios.get(
+      `http://testnet1.dfms.io:6366/api/v1/contract/get?arg=${route.params.cid[0]}`
     );
 
     const files = new Array();
     const folders = new Array();
 
-    try {
-      const locationData = await axios.get(
-        `/mock/testnet1.dfms.io/${route.params.cid.reduce(reducer)}.json`
-      );
+    const driveData = await axios.get(
+      `http://testnet1.dfms.io:6366/api/v1/drive/ls?arg=${route.params.cid[0]}${
+        route.params.cid.length > 1
+          ? "&arg=" + route.params.cid.reduce(removeDrivePath)
+          : ""
+      }`
+    );
 
-      if (locationData.data.list) {
-        locationData.data.list.forEach((driveItem) => {
-          driveData.data.List.forEach((item) => {
-            if (item.Name == driveItem) {
-              if (item.Type == "file") {
-                files.push(item);
-              } else {
-                folders.push(item);
-              }
-              return;
-            }
-          });
-        });
-      }
-    } catch (e) {
-      console.error("Location Data Not Found", e);
+    if (driveData.data.List) {
+      driveData.data.List.forEach((item) => {
+        if (item.Type == "file") {
+          files.push(item);
+        } else {
+          folders.push(item);
+        }
+      });
     }
 
-    driveDetails.value = driveData.data.Contract;
+    driveDetails.value = contractData.data.Contract;
     driveDetails.value.Files = files;
     driveDetails.value.Folders = folders;
 
