@@ -21,25 +21,76 @@
       </router-link>
     </li>
   </ul>
-  <div v-if="driveDetails.replicas == 0" class="hero hero-sm bg-error my-2">
-    <div class="hero-body">
-      <p>Not Active</p>
-      <h1>{{ driveDetails.drive.substr(0, 15) }}...</h1>
-    </div>
-  </div>
   <div
-    v-else-if="driveDetails.replicas < driveDetails.minReplicators"
-    class="hero hero-sm bg-warning my-2"
+    class="hero my-2"
+    :class="{
+      'bg-gray': driveDetails.state == 0,
+      'bg-warning': driveDetails.state == 1,
+      'bg-success': driveDetails.state == 2,
+      'bg-error': driveDetails.state == 3,
+    }"
   >
     <div class="hero-body">
-      <p>Pending</p>
-      <h1>{{ driveDetails.drive.substr(0, 15) }}...</h1>
-    </div>
-  </div>
-  <div v-else class="hero hero-sm bg-success my-2">
-    <div class="hero-body">
-      <p>Active</p>
-      <h1>{{ driveDetails.drive.substr(0, 15) }}...</h1>
+      <div v-if="driveDetails.state == 1">Pending</div>
+      <div v-else-if="driveDetails.state == 2">Active</div>
+      <div v-else-if="driveDetails.state == 3">Completed</div>
+      <div v-else>Not Active</div>
+      <h1 class="text-ellipsis">{{ $route.params.cid[0] }}</h1>
+      <ul>
+        <li class="text-ellipsis">
+          Public Key: <b>{{ driveDetails.multisig }}</b>
+        </li>
+        <li class="text-ellipsis">
+          Owner: <b>{{ driveDetails.owner }}</b>
+        </li>
+        <li>
+          Created: Block
+          <b>{{ $filters.numberArrayToCompact(driveDetails.start) }}</b>
+        </li>
+        <li>
+          Duration:
+          <b>{{ $filters.numberArrayToCompact(driveDetails.duration) }}</b>
+          Block(s)
+        </li>
+        <li>
+          Storage Used:
+          <b>{{
+            $filters.bytesToSize(
+              $filters.numberArrayToCompact(driveDetails.occupiedSpace)
+            )
+          }}</b>
+        </li>
+        <li>
+          Storage:
+          <b>{{
+            $filters.bytesToSize(
+              $filters.numberArrayToCompact(driveDetails.size)
+            )
+          }}</b>
+        </li>
+        <li>
+          Billing Price:
+          <b>{{ $filters.numberArrayToCompact(driveDetails.billingPrice) }}</b>
+          SO
+        </li>
+        <li>
+          Billing Period:
+          <b>{{ $filters.numberArrayToCompact(driveDetails.billingPeriod) }}</b>
+          Block(s)
+        </li>
+        <li>
+          Min Replicators: <b>{{ driveDetails.minReplicators }}</b>
+        </li>
+        <li>
+          Replicators: <b>{{ driveDetails.replicators.length }}</b>
+        </li>
+        <li>
+          Current Replicas: <b>{{ driveDetails.replicas }}</b>
+        </li>
+        <li>
+          Percent Approvers: <b>{{ driveDetails.percentApprovers }} %</b>
+        </li>
+      </ul>
     </div>
   </div>
   <div v-if="driveDetails.Folders.length > 0" class="columns mx-2">
@@ -106,7 +157,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { ref } from "vue";
+import { getCurrentInstance, inject, ref } from "vue";
 import { useRoute } from "vue-router";
 import axios from "axios";
 
@@ -118,13 +169,19 @@ export default {
     FontAwesomeIcon,
   },
   async setup() {
+    const internalInstance = getCurrentInstance();
+    const siriusStore = inject("siriusStore");
     const route = useRoute();
     const driveDetails = ref(null);
     const removeDrivePath = (accumulator, currentValue, currentIndex) =>
       currentIndex == 1 ? currentValue : accumulator + `/${currentValue}`;
 
-    const contractData = await axios.get(
-      `http://testnet1.dfms.io:6366/api/v1/contract/get?arg=${route.params.cid[0]}`
+    const contractDetails = await axios.get(
+      `${
+        siriusStore.state.selectedNode
+      }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
+        route.params.cid[0]
+      )}`
     );
 
     const files = new Array();
@@ -148,7 +205,7 @@ export default {
       });
     }
 
-    driveDetails.value = contractData.data.Contract;
+    driveDetails.value = contractDetails.data.drive;
     driveDetails.value.Files = files;
     driveDetails.value.Folders = folders;
 
@@ -167,5 +224,9 @@ export default {
 
 .hero {
   @include shadow-variant($unit-1);
+}
+
+ul {
+  list-style-type: none;
 }
 </style>

@@ -1,63 +1,80 @@
 <template>
   <div
     v-for="item in driveDetails"
-    :key="item.contract.drive"
+    :key="item.drive.Id"
     class="tile tile-centered"
   >
     <div class="tile-icon p-2">
       <figure class="avatar">
         <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
-        <i v-if="item.contract.replicas == 0" class="avatar-presence busy"></i>
-        <i
-          v-else-if="item.contract.replicas < item.contract.minReplicators"
-          class="avatar-presence away"
-        ></i>
-        <i v-else class="avatar-presence online"></i>
+        <i v-if="item.drive.state == 1" class="avatar-presence away"></i>
+        <i v-else-if="item.drive.state == 2" class="avatar-presence online"></i>
+        <i v-else-if="item.drive.state == 3" class="avatar-presence busy"></i>
+        <i v-else class="avatar-presence"></i>
       </figure>
     </div>
     <div class="tile-content">
       <div class="tile-title h5">
         <router-link
-          :to="{ name: 'Drive Details', params: { cid: [item.contract.drive] } }"
+          :to="{ name: 'Drive Details', params: { cid: [item.drive.Id] } }"
         >
-          {{ item.contract.drive.substr(0, 15) }}...
+          {{ item.drive.Id.substr(0, 15) }}...
         </router-link>
       </div>
       <div class="tile-subtitle text-small">
         Owner:
-        <b>{{ item.contract.owner.substr(0, 15) }}...</b>
+        <b>{{ item.drive.owner.substr(0, 15) }}...</b>
+      </div>
+    </div>
+    <div class="tile-content">
+      <div class="tile-title">
+        Created:
+        <b>Block {{ $filters.numberArrayToCompact(item.drive.start) }}</b>
+      </div>
+      <div class="tile=subtitle">
+        Duration:
+        <b>{{ $filters.numberArrayToCompact(item.drive.duration) }} Block(s)</b>
       </div>
     </div>
     <div class="tile-content">
       <div class="tile-title">
         Storage Used:
-        <b>{{ $filters.bytesToSize(item.spaceUsed) }}</b>
+        <b>{{
+          $filters.bytesToSize(
+            $filters.numberArrayToCompact(item.drive.occupiedSpace)
+          )
+        }}</b>
       </div>
       <div class="tile=subtitle">
-        Expiry:
+        Storage:
         <b>{{
-          item.contract.duration > 0 ? item.contract.created + item.contract.duration : "No Expiry"
+          $filters.bytesToSize($filters.numberArrayToCompact(item.drive.size))
         }}</b>
       </div>
     </div>
     <div class="tile-content">
       <div class="tile-title">
         Billing Price:
-        <b>{{ item.contract.billingPrice }} SO</b>
+        <b>{{ $filters.numberArrayToCompact(item.drive.billingPrice) }} SO</b>
       </div>
       <div class="tile=subtitle">
         Billing Period:
-        <b>{{ item.contract.billingPeriod }} Block(s)</b>
+        <b
+          >{{
+            $filters.numberArrayToCompact(item.drive.billingPeriod)
+          }}
+          Block(s)</b
+        >
       </div>
     </div>
     <div class="tile-content">
       <div class="tile-title">
         Replicas:
-        <b>{{ item.contract.replicas }}</b>
+        <b>{{ item.drive.replicas }}</b>
       </div>
       <div class="tile-subtitle">
         Approvers:
-        <b>{{ item.contract.percentApprovers }} %</b>
+        <b>{{ item.drive.percentApprovers }} %</b>
       </div>
     </div>
     <div class="tile-action text-center mx-2">
@@ -75,7 +92,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { ref } from "vue";
+import { getCurrentInstance, inject, ref } from "vue";
 import axios from "axios";
 
 library.add(faHdd);
@@ -86,23 +103,29 @@ export default {
     FontAwesomeIcon,
   },
   async setup() {
+    const internalInstance = getCurrentInstance();
+    const siriusStore = inject("siriusStore");
     const driveDetails = ref([]);
 
     const drives = await axios.get(
       "http://testnet1.dfms.io:6366/api/v1/contract/ls"
     );
     drives.data.Ids.forEach(async (id) => {
-      const contractDetail = axios.get(
-        `http://testnet1.dfms.io:6366/api/v1/contract/get?arg=${id}`
+      const contractDetail = await axios.get(
+        `${
+          siriusStore.state.selectedNode
+        }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
+          id
+        )}`
       );
       const driveDetail = axios.get(
         `http://testnet1.dfms.io:6366/api/v1/drive/ls?arg=${id}`
       );
 
       const details = await Promise.all([contractDetail, driveDetail]);
+      details[0].data.drive.Id = id;
       const result = {
-        contract: details[0].data.Contract,
-        spaceUsed: 0,
+        drive: details[0].data.drive,
         folders: 0,
         files: 0,
       };
@@ -112,10 +135,6 @@ export default {
             result.folders++;
           } else {
             result.files++;
-          }
-
-          if (item.Size != 0) {
-            result.spaceUsed += item.Size;
           }
         });
       }
