@@ -34,7 +34,9 @@ export default {
     const nodeDetail = ref(null);
     const matchPeerId = (peer) => route.params.nodeId == peer.ID;
 
-    const peers = await axios.get("/mock/testnet1.dfms.io/peers.json");
+    const peers = await axios.get(
+      "http://testnet1.dfms.io:6366/api/v1/net/peers"
+    );
     const peerIndex = peers.data.Peers.findIndex(matchPeerId);
     if (peerIndex != -1) {
       const peerDetail = peers.data.Peers[peerIndex].Addrs[0].split("/");

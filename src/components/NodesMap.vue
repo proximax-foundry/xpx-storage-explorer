@@ -63,10 +63,9 @@ import mapboxgl from "mapbox-gl/dist/mapbox-gl";
 
 export default {
   name: "NodesMap",
-  async setup() {
+  setup() {
     const map = ref(null);
     const nodeDetails = ref([]);
-    const peers = ref(null);
     const mapMarker = require("@/assets/map-pointer.svg");
 
     mapboxgl.accessToken =
@@ -120,24 +119,22 @@ export default {
     };
 
     onMounted(async () => {
-      try {
-        const nodeDetail = await axios.get("mock/testnet1.dfms.io.json");
-        const ipDetail = await axios.get(
-          "https://geolocation-db.com/json/testnet1.dfms.io"
-        );
+      const resp = await Promise.all([
+        axios.get("http://testnet1.dfms.io:6366/api/v1/net/id"),
+        axios.get("https://geolocation-db.com/json/testnet1.dfms.io"),
+        axios.get("http://testnet1.dfms.io:6366/api/v1/net/peers"),
+      ]);
 
-        map.value = new mapboxgl.Map({
-          container: "map",
-          style: "mapbox://styles/mapbox/light-v10",
-          center: [ipDetail.data.longitude, ipDetail.data.latitude],
-          zoom: 5,
-        });
-        map.value.addControl(new mapboxgl.FullscreenControl());
-        pushData(nodeDetail.data.ID, "testnet1.dfms.io", ipDetail.data);
-      } catch (err) {
-        console.error("Geo Location DB Error", err);
-      }
-      peers.value.data.Peers.forEach(async (peer) => {
+      map.value = new mapboxgl.Map({
+        container: "map",
+        style: "mapbox://styles/mapbox/light-v10",
+        center: [resp[1].data.longitude, resp[1].data.latitude],
+        zoom: 5,
+      });
+      map.value.addControl(new mapboxgl.FullscreenControl());
+      pushData(resp[0].data.ID, "testnet1.dfms.io", resp[1].data);
+
+      resp[2].data.Peers.forEach(async (peer) => {
         const peerDetail = peer.Addrs[0].split("/");
         const ipDetail = await axios.get(
           `https://geolocation-db.com/json/${peerDetail[2]}`
@@ -146,7 +143,6 @@ export default {
       });
     });
 
-    peers.value = await axios.get("mock/testnet1.dfms.io/peers.json");
     return {
       mapFocus,
       tableData: nodeDetails,
