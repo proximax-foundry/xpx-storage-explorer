@@ -1,6 +1,15 @@
 import { Deadline, UInt64 } from "tsjs-xpx-chain-sdk";
+import { createFromB58String } from "peer-id";
 import CID from "multiformats/cid";
 import crypto from "libp2p-crypto";
+
+function idToPublicKey(uint8Arr) {
+  const key = crypto.keys.supportedKeys["ed25519"].unmarshalEd25519PublicKey(
+    uint8Arr
+  );
+
+  return Buffer.from(key._key).toString("hex");
+}
 
 export default {
   getRelativeTimestamp(blockTimestamp) {
@@ -21,14 +30,15 @@ export default {
 
     return `${(bytes / 1024 ** i).toFixed(2)} ${sizes[i]}`;
   },
-  cidToPublicKey(hexString) {
-    const cid = CID.parse(hexString);
-    const key = crypto.keys.supportedKeys["ed25519"].unmarshalEd25519PublicKey(
-      cid.multihash.digest.slice(4)
-    );
-    return Buffer.from(key._key).toString("hex");
-  },
   numberArrayToCompact(numberArray) {
     return new UInt64(numberArray).compact();
+  },
+  cidToPublicKey(hexString) {
+    const cid = CID.parse(hexString);
+    return idToPublicKey(cid.multihash.digest.slice(4));
+  },
+  peerIdToPublicKey(hexString) {
+    const peerId = createFromB58String(hexString);
+    return idToPublicKey(peerId._id.slice(6));
   },
 };
