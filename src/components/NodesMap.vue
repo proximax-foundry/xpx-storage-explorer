@@ -10,7 +10,7 @@
             <th>ID</th>
             <th>Host</th>
             <th>Location</th>
-            <th>Status</th>
+            <th>Type</th>
           </tr>
         </thead>
         <transition-group name="node-table" tag="tbody">
@@ -34,21 +34,8 @@
               </router-link>
             </td>
             <td data-th="Host">{{ item.details.IPv4 }}</td>
-            <td data-th="Location">
-              {{
-                item.details.country_name == "Not found"
-                  ? "N/A"
-                  : item.details.country_name
-              }}
-            </td>
-            <td data-th="Status">
-              <span
-                v-if="item.details.country_name == 'Not found'"
-                class="label label-error"
-                >Offline</span
-              >
-              <span v-else class="label label-success">Online</span>
-            </td>
+            <td data-th="Location">{{ item.details.country_name }}</td>
+            <td data-th="Type">{{ item.type }}</td>
           </tr>
         </transition-group>
       </table>
@@ -75,13 +62,14 @@ export default {
       map.value.jumpTo({ center: [longitude, latitude] });
     };
 
-    const pushData = (peerId, peerIp, geolocationDetails) => {
+    const pushData = (peerId, peerIp, nodeType, geolocationDetails) => {
       if (geolocationDetails.IPv4 == "Not found") {
         geolocationDetails.IPv4 = peerIp;
       }
 
       nodeDetails.value.push({
         id: peerId,
+        type: nodeType,
         details: geolocationDetails,
       });
 
@@ -132,14 +120,21 @@ export default {
         zoom: 5,
       });
       map.value.addControl(new mapboxgl.FullscreenControl());
-      pushData(resp[0].data.ID, "testnet1.dfms.io", resp[1].data);
+
+      pushData(resp[0].data.ID, "testnet1.dfms.io", "SDN & SRN", resp[1].data);
 
       resp[2].data.Peers.forEach(async (peer) => {
         const peerDetail = peer.Addrs[0].split("/");
         const ipDetail = await axios.get(
           `https://geolocation-db.com/json/${peerDetail[2]}`
         );
-        pushData(peer.ID, peerDetail[2], ipDetail.data);
+
+        pushData(
+          peer.ID,
+          peerDetail[2],
+          peerDetail[4] == 63666 ? "SDN" : "SRN",
+          ipDetail.data
+        );
       });
     });
 

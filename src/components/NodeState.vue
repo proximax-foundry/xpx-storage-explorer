@@ -13,13 +13,21 @@
             </td>
           </tr>
           <tr>
+            <td class="text-bold">Type</td>
+            <td>{{ nodeDetail.type }}</td>
+          </tr>
+          <tr>
             <td class="text-bold">Host</td>
             <td>{{ nodeDetail.IPv4 }}</td>
           </tr>
           <tr>
             <td class="text-bold">Country</td>
+            <td>{{ nodeDetail.country_name }}</td>
+          </tr>
+          <tr>
+            <td class="text-bold">Average Ping</td>
             <td>
-              {{ nodeDetail.country_name }}
+              {{ nodeDetail.ping > 0 ? nodeDetail.ping + " ms" : "Timed Out" }}
             </td>
           </tr>
         </tbody>
@@ -57,6 +65,7 @@ export default {
 
       nodeDetail.value = ipDetail.data;
       nodeDetail.value.id = peers.data.Peers[peerIndex].ID;
+      nodeDetail.value.type = peerDetail[4] == 63666 ? "SDN" : "SRN";
     } else {
       const ipDetail = await axios.get(
         "https://geolocation-db.com/json/testnet1.dfms.io"
@@ -68,7 +77,18 @@ export default {
 
       nodeDetail.value = ipDetail.data;
       nodeDetail.value.id = route.params.nodeId;
+      nodeDetail.value.type = "SDN & SRN";
     }
+
+    nodeDetail.value.ping = 0;
+
+    for (let i = 0; i < 5; i++) {
+      const start = new Date();
+      await fetch(nodeDetail.value.IPv4, { mode: "no-cors" });
+      nodeDetail.value.ping += new Date() - start;
+    }
+
+    nodeDetail.value.ping /= 5;
 
     return {
       nodeDetail,

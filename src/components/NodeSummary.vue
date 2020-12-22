@@ -7,9 +7,9 @@
     <thead>
       <tr>
         <th>ID</th>
-        <th>IP</th>
-        <th>Country</th>
-        <th>Status</th>
+        <th>Host</th>
+        <th>Location</th>
+        <th>Type</th>
         <th></th>
       </tr>
     </thead>
@@ -22,22 +22,9 @@
             {{ item.id }}
           </router-link>
         </td>
-        <td data-th="IP">{{ item.details.IPv4 }}</td>
-        <td data-th="Country">
-          {{
-            item.details.country_name == "Not found"
-              ? "N/A"
-              : item.details.country_name
-          }}
-        </td>
-        <td data-th="Status">
-          <span
-            v-if="item.details.country_name == 'Not found'"
-            class="label label-error"
-            >Offline</span
-          >
-          <span v-else class="label label-success">Online</span>
-        </td>
+        <td data-th="Host">{{ item.details.IPv4 }}</td>
+        <td data-th="Location">{{ item.details.country_name }}</td>
+        <td data-th="Type">{{ item.type }}</td>
         <td class="text-center">
           <router-link
             :to="{ name: 'Node Details', params: { nodeId: item.id } }"
@@ -75,6 +62,7 @@ export default {
 
       nodeDetails.value.push({
         id: peer.ID,
+        type: peerDetail[4] == 63666 ? "SDN" : "SRN",
         details: ipDetail.data,
       });
     });
