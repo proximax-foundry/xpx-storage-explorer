@@ -1,6 +1,5 @@
 import { Deadline, UInt64 } from "tsjs-xpx-chain-sdk";
-import { createFromB58String } from "peer-id";
-import CID from "multiformats/cid";
+import multibase from "multibase";
 import crypto from "libp2p-crypto";
 
 function idToPublicKey(uint8Arr) {
@@ -34,11 +33,11 @@ export default {
     return new UInt64(numberArray).compact();
   },
   cidToPublicKey(hexString) {
-    const cid = CID.parse(hexString);
-    return idToPublicKey(cid.multihash.digest.slice(4));
+    const cid = multibase.decode(hexString);
+    return idToPublicKey(cid.slice(8));
   },
   peerIdToPublicKey(hexString) {
-    const peerId = createFromB58String(hexString);
-    return idToPublicKey(peerId._id.slice(6));
+    const peerId = multibase.decode("z" + hexString);
+    return idToPublicKey(peerId.slice(6));
   },
 };
