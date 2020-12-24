@@ -28,7 +28,6 @@
         </template>
       </SuspenseTemplate>
     </div>
-    <hr />
     <div class="column col-12">
       <SuspenseTemplate>
         <template #default>
