@@ -22,7 +22,7 @@
         <b>{{ item.owner.substr(0, 15) }}...</b>
       </div>
     </div>
-    <div class="tile-content">
+    <div class="tile-content hide-lg">
       <div class="tile-title">
         Created:
         <b>Block {{ $filters.numberArrayToCompact(item.start) }}</b>
@@ -32,7 +32,7 @@
         <b>{{ $filters.numberArrayToCompact(item.duration) }} Block(s)</b>
       </div>
     </div>
-    <div class="tile-content">
+    <div class="tile-content hide-md">
       <div class="tile-title">
         Storage Used:
         <b>{{
@@ -48,7 +48,7 @@
         }}</b>
       </div>
     </div>
-    <div class="tile-content">
+    <div class="tile-content hide-lg">
       <div class="tile-title">
         Billing Price:
         <b>{{ $filters.numberArrayToCompact(item.billingPrice) }} SO</b>
@@ -58,7 +58,7 @@
         <b>{{ $filters.numberArrayToCompact(item.billingPeriod) }} Block(s)</b>
       </div>
     </div>
-    <div class="tile-content">
+    <div class="tile-content hide-xl">
       <div class="tile-title">
         Replicas:
         <b>{{ item.replicas }}</b>

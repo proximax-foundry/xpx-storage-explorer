@@ -36,77 +36,65 @@
       <div v-else-if="driveDetails.state == 3">Completed</div>
       <div v-else>Not Active</div>
       <h1 class="text-ellipsis">{{ $route.params.cid[0] }}</h1>
-      <div class="tile tile-centered">
-        <div class="tile-content">
-          <div class="tile-title">
-            Public Key:
-            <b>{{ driveDetails.multisig.substr(0, 15) }}...</b>
-          </div>
-          <div class="tile-subtitle">
-            Owner:
-            <b>{{ driveDetails.owner.substr(0, 15) }}...</b>
-          </div>
+      <div class="columns">
+        <div class="column col-3">
+          <div>Public Key:</div>
+          <div class="text-bold text-ellipsis">{{ driveDetails.multisig }}</div>
+          <div>Owner:</div>
+          <div class="text-bold text-ellipsis">{{ driveDetails.owner }}</div>
         </div>
-        <div class="tile-content">
-          <div class="tile-title">
-            Created: Block
-            <b>{{ $filters.numberArrayToCompact(driveDetails.start) }}</b>
+        <div class="column">
+          <div>Created:</div>
+          <div class="text-bold">
+            Block {{ $filters.numberArrayToCompact(driveDetails.start) }}
           </div>
-          <div class="tile-subtitle">
-            Duration:
-            <b>{{ $filters.numberArrayToCompact(driveDetails.duration) }}</b>
+          <div>Duration:</div>
+          <div class="text-bold">
+            {{ $filters.numberArrayToCompact(driveDetails.duration) }}
             Block(s)
           </div>
         </div>
-        <div class="tile-content">
-          <div class="tile-title">
-            Storage Used:
-            <b>{{
+        <div class="column">
+          <div>Storage Used:</div>
+          <div class="text-bold">
+            {{
               $filters.bytesToSize(
                 $filters.numberArrayToCompact(driveDetails.occupiedSpace)
               )
-            }}</b>
+            }}
           </div>
-          <div class="tile-subtitle">
-            Storage:
-            <b>{{
+          <div>Storage:</div>
+          <div class="text-bold">
+            {{
               $filters.bytesToSize(
                 $filters.numberArrayToCompact(driveDetails.size)
               )
-            }}</b>
+            }}
           </div>
         </div>
-        <div class="tile-content">
-          <div class="tile-title">
-            Billing Price:
-            <b>{{
-              $filters.numberArrayToCompact(driveDetails.billingPrice)
-            }}</b>
+        <div class="column">
+          <div>Billing Price:</div>
+          <div class="text-bold">
+            {{ $filters.numberArrayToCompact(driveDetails.billingPrice) }}
             SO
           </div>
-          <div class="tile-subtitle">
-            Billing Period:
-            <b>{{
-              $filters.numberArrayToCompact(driveDetails.billingPeriod)
-            }}</b>
+          <div>Billing Period:</div>
+          <div class="text-bold">
+            {{ $filters.numberArrayToCompact(driveDetails.billingPeriod) }}
             Block(s)
           </div>
         </div>
-        <div class="tile-content">
-          <div class="tile-title">
-            Min Replicators: <b>{{ driveDetails.minReplicators }}</b>
-          </div>
-          <div class="tile-subtitle">
-            Replicators: <b>{{ driveDetails.replicators.length }}</b>
-          </div>
+        <div class="column">
+          <div>Min Replicators:</div>
+          <div class="text-bold">{{ driveDetails.minReplicators }}</div>
+          <div>Replicators:</div>
+          <div class="text-bold">{{ driveDetails.replicators.length }}</div>
         </div>
-        <div class="tile-content">
-          <div class="tile-title">
-            Current Replicas: <b>{{ driveDetails.replicas }}</b>
-          </div>
-          <div class="tile-subtitle">
-            Percent Approvers: <b>{{ driveDetails.percentApprovers }} %</b>
-          </div>
+        <div class="column">
+          <div>Current Replicas:</div>
+          <div class="text-bold">{{ driveDetails.replicas }}</div>
+          <div>Percent Approvers:</div>
+          <div class="text-bold">{{ driveDetails.percentApprovers }} %</div>
         </div>
       </div>
     </div>
