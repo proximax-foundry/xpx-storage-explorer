@@ -15,7 +15,7 @@
         </thead>
         <transition-group name="node-table" tag="tbody">
           <tr
-            v-for="item in tableData"
+            v-for="(item, index) in tableData"
             :key="item.id"
             :class="{
               'c-hand': item.details.longitude && item.details.latitude,
@@ -28,10 +28,12 @@
           >
             <td data-th="ID">
               <router-link
+                v-if="index == 0"
                 :to="{ name: 'Node Details', params: { nodeId: item.id } }"
               >
                 {{ item.id }}
               </router-link>
+              <div v-else>{{ item.id }}</div>
             </td>
             <td data-th="Host">{{ item.details.IPv4 }}</td>
             <td data-th="Location">{{ item.details.country_name }}</td>
@@ -64,7 +66,7 @@ export default {
 
     const pushData = (peerId, peerIp, nodeType, geolocationDetails) => {
       if (geolocationDetails.IPv4 == "Not found") {
-        geolocationDetails.IPv4 = peerIp;
+        return;
       }
 
       nodeDetails.value.push({
@@ -109,7 +111,7 @@ export default {
     onMounted(async () => {
       const resp = await Promise.all([
         axios.get("http://testnet1.dfms.io:6366/api/v1/net/id"),
-        axios.get("https://geolocation-db.com/json/testnet1.dfms.io"),
+        axios.get("https://geolocation-db.com/json/18.141.182.252"),
         axios.get("http://testnet1.dfms.io:6366/api/v1/net/peers"),
       ]);
 

@@ -68,12 +68,8 @@ export default {
       nodeDetail.value.type = peerDetail[4] == 63666 ? "SDN" : "SRN";
     } else {
       const ipDetail = await axios.get(
-        "https://geolocation-db.com/json/testnet1.dfms.io"
+        "https://geolocation-db.com/json/18.141.182.252"
       );
-
-      if (ipDetail.data.IPv4 == "Not found") {
-        ipDetail.data.IPv4 = "testnet1.dfms.io";
-      }
 
       nodeDetail.value = ipDetail.data;
       nodeDetail.value.id = route.params.nodeId;
@@ -84,7 +80,7 @@ export default {
 
     for (let i = 0; i < 5; i++) {
       const start = new Date();
-      await fetch(nodeDetail.value.IPv4, { mode: "no-cors" });
+      await fetch(`http://${nodeDetail.value.IPv4}:5000`, { mode: "no-cors" });
       nodeDetail.value.ping += new Date() - start;
     }
 
