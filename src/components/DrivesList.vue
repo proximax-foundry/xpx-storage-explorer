@@ -1,35 +1,39 @@
 <template>
-  <div v-for="item in driveDetails" :key="item.Id" class="tile tile-centered">
+  <div
+    v-for="item in drives.data.data"
+    :key="item.drive.Id"
+    class="tile tile-centered"
+  >
     <div class="tile-icon p-2">
       <figure class="avatar">
         <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
-        <i v-if="item.state == 1" class="avatar-presence away"></i>
-        <i v-else-if="item.state == 2" class="avatar-presence online"></i>
-        <i v-else-if="item.state == 3" class="avatar-presence busy"></i>
+        <i v-if="item.drive.state == 1" class="avatar-presence away"></i>
+        <i v-else-if="item.drive.state == 2" class="avatar-presence online"></i>
+        <i v-else-if="item.drive.state == 3" class="avatar-presence busy"></i>
         <i v-else class="avatar-presence"></i>
       </figure>
     </div>
     <div class="tile-content">
       <div class="tile-title h5">
         <router-link
-          :to="{ name: 'Drive Details', params: { cid: [item.Id] } }"
+          :to="{ name: 'Drive Details', params: { cid: [item.drive.Id] } }"
         >
-          {{ item.Id.substr(0, 15) }}...
+          {{ item.drive.Id.substr(0, 15) }}...
         </router-link>
       </div>
       <div class="tile-subtitle text-small">
         Owner:
-        <b>{{ item.owner.substr(0, 15) }}...</b>
+        <b>{{ item.drive.owner.substr(0, 15) }}...</b>
       </div>
     </div>
     <div class="tile-content hide-lg">
       <div class="tile-title">
         Created:
-        <b>Block {{ $filters.numberArrayToCompact(item.start) }}</b>
+        <b>Block {{ $filters.numberArrayToCompact(item.drive.start) }}</b>
       </div>
       <div class="tile=subtitle">
         Duration:
-        <b>{{ $filters.numberArrayToCompact(item.duration) }} Block(s)</b>
+        <b>{{ $filters.numberArrayToCompact(item.drive.duration) }} Block(s)</b>
       </div>
     </div>
     <div class="tile-content hide-md">
@@ -37,43 +41,46 @@
         Storage Used:
         <b>{{
           $filters.bytesToSize(
-            $filters.numberArrayToCompact(item.occupiedSpace)
+            $filters.numberArrayToCompact(item.drive.occupiedSpace)
           )
         }}</b>
       </div>
       <div class="tile=subtitle">
         Storage:
         <b>{{
-          $filters.bytesToSize($filters.numberArrayToCompact(item.size))
+          $filters.bytesToSize($filters.numberArrayToCompact(item.drive.size))
         }}</b>
       </div>
     </div>
     <div class="tile-content hide-lg">
       <div class="tile-title">
         Billing Price:
-        <b>{{ $filters.numberArrayToCompact(item.billingPrice) }} SO</b>
+        <b>{{ $filters.numberArrayToCompact(item.drive.billingPrice) }} SO</b>
       </div>
       <div class="tile=subtitle">
         Billing Period:
-        <b>{{ $filters.numberArrayToCompact(item.billingPeriod) }} Block(s)</b>
+        <b>
+          {{ $filters.numberArrayToCompact(item.drive.billingPeriod) }}
+          Block(s)
+        </b>
       </div>
     </div>
     <div class="tile-content hide-xl">
       <div class="tile-title">
         Replicas:
-        <b>{{ item.replicas }}</b>
+        <b>{{ item.drive.replicas }}</b>
       </div>
       <div class="tile-subtitle">
         Approvers:
-        <b>{{ item.percentApprovers }} %</b>
+        <b>{{ item.drive.percentApprovers }} %</b>
       </div>
     </div>
     <div class="tile-action text-center mx-2">
-      <div class="tile-title h5">{{ item.folders }}</div>
+      <div class="tile-title h5">{{ item.drive.count.folders }}</div>
       <div class="tile-subtitle text-small">Folder(s)</div>
     </div>
     <div class="tile-action text-center mx-2">
-      <div class="tile-title h5">{{ item.files }}</div>
+      <div class="tile-title h5">{{ item.drive.count.files }}</div>
       <div class="tile-subtitle text-small">File(s)</div>
     </div>
   </div>
@@ -96,42 +103,37 @@ export default {
   async setup() {
     const internalInstance = getCurrentInstance();
     const siriusStore = inject("siriusStore");
-    const driveDetails = ref([]);
+    const drives = ref(null);
 
-    const drives = await axios.get(
-      "http://testnet1.dfms.io:6366/api/v1/contract/ls"
-    );
-    drives.data.Ids.forEach(async (id) => {
-      const resp = await Promise.all([
-        axios.get(
-          `${
-            siriusStore.state.selectedNode
-          }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
-            id
-          )}`
-        ),
-        axios.get(`http://testnet1.dfms.io:6366/api/v1/drive/ls?arg=${id}`),
-      ]);
+    drives.value = await axios.get(`${siriusStore.state.selectedNode}/drives`);
+    drives.value.data.data.forEach(async (drive) => {
+      drive.drive.Id = internalInstance.appContext.config.globalProperties.$filters.publicKeyToCID(
+        drive.drive.multisig
+      );
+      drive.drive.count = {
+        folders: 0,
+        files: 0,
+      };
 
-      resp[0].data.drive.Id = id;
-      resp[0].data.drive.folders = 0;
-      resp[0].data.drive.files = 0;
+      if (drive.drive.state == 1 || drive.drive.state == 2) {
+        const resp = await axios.get(
+          `http://testnet1.dfms.io:6466/api/v1/drive/ls?arg=${drive.drive.Id}`
+        );
 
-      if (resp[1].data.List) {
-        resp[1].data.List.forEach((item) => {
-          if (item.Type == "dir") {
-            resp[0].data.drive.folders++;
-          } else {
-            resp[0].data.drive.files++;
-          }
-        });
+        if (resp.data.List) {
+          resp.data.List.forEach((item) => {
+            if (item.Type == "dir") {
+              drive.drive.count.folders++;
+            } else {
+              drive.drive.count.files++;
+            }
+          });
+        }
       }
-
-      driveDetails.value.push(resp[0].data.drive);
     });
 
     return {
-      driveDetails,
+      drives,
     };
   },
 };

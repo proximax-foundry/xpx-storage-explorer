@@ -20,7 +20,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { getCurrentInstance, inject, reactive } from "vue";
+import { inject, reactive } from "vue";
 import axios from "axios";
 
 library.add(faHdd);
@@ -31,7 +31,6 @@ export default {
     FontAwesomeIcon,
   },
   async setup() {
-    const internalInstance = getCurrentInstance();
     const siriusStore = inject("siriusStore");
     const drives = reactive({
       total: 0,
@@ -39,23 +38,9 @@ export default {
     });
 
     const contracts = await axios.get(
-      "http://testnet1.dfms.io:6366/api/v1/contract/ls"
+      `${siriusStore.state.selectedNode}/drives`
     );
-    drives.total = contracts.data.Ids.length;
-
-    contracts.data.Ids.forEach(async (id) => {
-      const driveDetails = await axios.get(
-        `${
-          siriusStore.state.selectedNode
-        }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
-          id
-        )}`
-      );
-
-      if (driveDetails.data.drive.state == 2) {
-        drives.active++;
-      }
-    });
+    drives.total = contracts.data.pagination.totalEntries;
 
     return {
       drives,

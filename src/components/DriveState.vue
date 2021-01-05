@@ -24,7 +24,6 @@
   <div
     class="hero my-2"
     :class="{
-      'bg-gray': driveDetails.state == 0,
       'bg-warning': driveDetails.state == 1,
       'bg-success': driveDetails.state == 2,
       'bg-error': driveDetails.state == 3,
@@ -37,13 +36,13 @@
       <div v-else>Not Active</div>
       <h1 class="text-ellipsis">{{ $route.params.cid[0] }}</h1>
       <div class="columns">
-        <div class="column col-3">
+        <div class="column col-3 col-md-4">
           <div>Public Key:</div>
           <div class="text-bold text-ellipsis">{{ driveDetails.multisig }}</div>
           <div>Owner:</div>
           <div class="text-bold text-ellipsis">{{ driveDetails.owner }}</div>
         </div>
-        <div class="column">
+        <div class="column col-md-4">
           <div>Created:</div>
           <div class="text-bold">
             Block {{ $filters.numberArrayToCompact(driveDetails.start) }}
@@ -54,7 +53,7 @@
             Block(s)
           </div>
         </div>
-        <div class="column">
+        <div class="column col-md-4">
           <div>Storage Used:</div>
           <div class="text-bold">
             {{
@@ -72,7 +71,7 @@
             }}
           </div>
         </div>
-        <div class="column">
+        <div class="column col-md-4">
           <div>Billing Price:</div>
           <div class="text-bold">
             {{ $filters.numberArrayToCompact(driveDetails.billingPrice) }}
@@ -84,17 +83,29 @@
             Block(s)
           </div>
         </div>
-        <div class="column">
+        <div class="column col-md-4">
           <div>Min Replicators:</div>
           <div class="text-bold">{{ driveDetails.minReplicators }}</div>
           <div>Replicators:</div>
           <div class="text-bold">{{ driveDetails.replicators.length }}</div>
         </div>
-        <div class="column">
+        <div class="column col-md-4">
           <div>Current Replicas:</div>
           <div class="text-bold">{{ driveDetails.replicas }}</div>
           <div>Percent Approvers:</div>
           <div class="text-bold">{{ driveDetails.percentApprovers }} %</div>
+        </div>
+        <div v-if="driveDetails.replicators.length > 0" class="column col-12">
+          <div class="columns mt-2">
+            <div class="column col-auto">Replicators:</div>
+            <div
+              v-for="replicator in driveDetails.replicators"
+              :key="replicator.replicator"
+              class="column text-bold text-ellipsis"
+            >
+              {{ replicator.replicator }}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -230,27 +241,30 @@ export default {
     const removeDrivePath = (accumulator, currentValue, currentIndex) =>
       currentIndex == 1 ? currentValue : accumulator + `/${currentValue}`;
 
-    const contractDetails = await axios.get(
-      `${
-        siriusStore.state.selectedNode
-      }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
-        route.params.cid[0]
-      )}`
-    );
+    const resp = await Promise.all([
+      axios.get(
+        `${
+          siriusStore.state.selectedNode
+        }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
+          route.params.cid[0]
+        )}`
+      ),
+      axios.get(
+        `http://testnet1.dfms.io:6366/api/v1/drive/ls?arg=${
+          route.params.cid[0]
+        }${
+          route.params.cid.length > 1
+            ? "&arg=" + route.params.cid.reduce(removeDrivePath)
+            : ""
+        }`
+      ),
+    ]);
 
     const files = new Array();
     const folders = new Array();
 
-    const driveData = await axios.get(
-      `http://testnet1.dfms.io:6366/api/v1/drive/ls?arg=${route.params.cid[0]}${
-        route.params.cid.length > 1
-          ? "&arg=" + route.params.cid.reduce(removeDrivePath)
-          : ""
-      }`
-    );
-
-    if (driveData.data.List) {
-      driveData.data.List.forEach((item) => {
+    if (resp[1].data.List) {
+      resp[1].data.List.forEach((item) => {
         if (item.Type == "file") {
           files.push(item);
         } else {
@@ -259,7 +273,7 @@ export default {
       });
     }
 
-    driveDetails.value = contractDetails.data.drive;
+    driveDetails.value = resp[0].data.drive;
     driveDetails.value.Files = files;
     driveDetails.value.Folders = folders;
 
@@ -291,5 +305,6 @@ export default {
 
 .hero {
   @include shadow-variant($unit-1);
+  background: $gray-color;
 }
 </style>

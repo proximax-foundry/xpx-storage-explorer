@@ -5,143 +5,155 @@
   </div>
   <div class="columns">
     <div
-      v-for="item in driveDetails"
-      :key="item.Id"
-      class="column col-md-12 card mb-2 mr-2 p-0"
+      v-for="item in drives"
+      :key="item.drive.multisig"
+      class="column col-4 col-md-12 my-2"
     >
-      <div class="card-header">
-        <div v-if="item.state == 1" class="label label-rounded label-warning">
-          Pending
-        </div>
-        <div
-          v-else-if="item.state == 2"
-          class="label label-rounded label-success"
-        >
-          Active
-        </div>
-        <div
-          v-else-if="item.state == 3"
-          class="label label-rounded label-error"
-        >
-          Completed
-        </div>
-        <div v-else class="label label-rounded">Not Active</div>
-        <div class="card-title h5">
-          <router-link
-            :to="{ name: 'Drive Details', params: { cid: [item.Id] } }"
+      <div class="card">
+        <div class="card-header">
+          <div
+            v-if="item.drive.state == 1"
+            class="label label-rounded label-warning"
           >
-            {{ item.Id.substr(0, 15) }}...
+            Pending
+          </div>
+          <div
+            v-else-if="item.drive.state == 2"
+            class="label label-rounded label-success"
+          >
+            Active
+          </div>
+          <div
+            v-else-if="item.drive.state == 3"
+            class="label label-rounded label-error"
+          >
+            Completed
+          </div>
+          <div v-else class="label label-rounded">Not Active</div>
+          <div class="card-title h5">
+            <router-link
+              :to="{
+                name: 'Drive Details',
+                params: { cid: [$filters.publicKeyToCID(item.drive.multisig)] },
+              }"
+            >
+              {{
+                $filters.publicKeyToCID(item.drive.multisig).substr(0, 15)
+              }}...
+            </router-link>
+          </div>
+          <div class="card-subtitle text-gray">
+            Created at Block
+            {{ $filters.numberArrayToCompact(item.drive.start) }}
+          </div>
+        </div>
+        <div class="card-body text-break">
+          <table class="table table-striped">
+            <tbody>
+              <tr>
+                <td class="text-bold">Owner</td>
+                <td>{{ item.drive.owner.substr(0, 15) }}...</td>
+              </tr>
+              <tr>
+                <td class="text-bold">Duration</td>
+                <td>
+                  {{ $filters.numberArrayToCompact(item.drive.duration) }}
+                  Blocks
+                </td>
+              </tr>
+              <tr>
+                <td class="text-bold">Storage Used</td>
+                <td>
+                  {{
+                    $filters.bytesToSize(
+                      $filters.numberArrayToCompact(item.drive.occupiedSpace)
+                    )
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <td class="text-bold">Storage</td>
+                <td>
+                  {{
+                    $filters.bytesToSize(
+                      $filters.numberArrayToCompact(item.drive.size)
+                    )
+                  }}
+                </td>
+              </tr>
+              <tr>
+                <td class="text-bold">Billing Price</td>
+                <td>
+                  {{ $filters.numberArrayToCompact(item.drive.billingPrice) }}
+                  SO
+                </td>
+              </tr>
+              <tr>
+                <td class="text-bold">Billing Period</td>
+                <td>
+                  {{ $filters.numberArrayToCompact(item.drive.billingPeriod) }}
+                  Block(s)
+                </td>
+              </tr>
+              <tr>
+                <td class="text-bold">Current Replicas</td>
+                <td>{{ item.drive.replicas }}</td>
+              </tr>
+              <tr>
+                <td class="text-bold">Min Replicators</td>
+                <td>{{ item.drive.minReplicators }}</td>
+              </tr>
+              <tr>
+                <td class="text-bold">Percent Approvers</td>
+                <td>{{ item.drive.percentApprovers }} %</td>
+              </tr>
+              <tr v-if="item.drive.replicators.length > 0">
+                <td class="text-bold">Replicators</td>
+                <td>
+                  <ul
+                    v-for="replicator in item.drive.replicators"
+                    :key="replicator.replicator"
+                  >
+                    <li>{{ replicator.replicator.substr(0, 15) }}...</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer text-center">
+          <router-link
+            :to="{
+              name: 'Drive Details',
+              params: { cid: [$filters.publicKeyToCID(item.drive.multisig)] },
+            }"
+            class="btn"
+          >
+            More
           </router-link>
         </div>
-        <div class="card-subtitle text-gray">
-          Created at Block {{ $filters.numberArrayToCompact(item.start) }}
-        </div>
-      </div>
-      <div class="card-body">
-        <table class="table table-striped">
-          <tbody>
-            <tr>
-              <td class="text-bold">Owner</td>
-              <td>{{ item.owner.substr(0, 15) }}...</td>
-            </tr>
-            <tr>
-              <td class="text-bold">Replicators</td>
-              <td>
-                <ul v-for="replicator in item.replicators" :key="replicator">
-                  <li class="text-ellipsis">
-                    {{ replicator.replicator.substr(0, 15) }}...
-                  </li>
-                </ul>
-              </td>
-            </tr>
-            <tr>
-              <td class="text-bold">Billing Price</td>
-              <td>{{ $filters.numberArrayToCompact(item.billingPrice) }} SO</td>
-            </tr>
-            <tr>
-              <td class="text-bold">Billing Period</td>
-              <td>
-                {{ $filters.numberArrayToCompact(item.billingPeriod) }} Block(s)
-              </td>
-            </tr>
-            <tr>
-              <td class="text-bold">Current Replicas</td>
-              <td>{{ item.replicas }}</td>
-            </tr>
-            <tr>
-              <td class="text-bold">Min Replicators</td>
-              <td>{{ item.minReplicators }}</td>
-            </tr>
-            <tr>
-              <td class="text-bold">Percent Approvers</td>
-              <td>{{ item.percentApprovers }} %</td>
-            </tr>
-            <tr>
-              <td class="text-bold">Storage Used</td>
-              <td>
-                {{
-                  $filters.bytesToSize(
-                    $filters.numberArrayToCompact(item.occupiedSpace)
-                  )
-                }}
-              </td>
-            </tr>
-            <tr>
-              <td class="text-bold">Storage</td>
-              <td>
-                {{
-                  $filters.bytesToSize($filters.numberArrayToCompact(item.size))
-                }}
-              </td>
-            </tr>
-            <tr>
-              <td class="text-bold">Duration</td>
-              <td>{{ $filters.numberArrayToCompact(item.duration) }} Blocks</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card-footer text-center">
-        <router-link
-          :to="{ name: 'Drive Details', params: { cid: [item.Id] } }"
-          class="btn"
-        >
-          More
-        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { getCurrentInstance, inject, ref } from "vue";
+import { inject, ref } from "vue";
 import axios from "axios";
 
 export default {
   name: "DriveSummary",
   async setup() {
-    const internalInstance = getCurrentInstance();
     const siriusStore = inject("siriusStore");
-    const driveDetails = ref([]);
+    const drives = ref(null);
 
-    const drives = await axios.get(
-      "http://testnet1.dfms.io:6366/api/v1/contract/ls"
+    const contracts = await axios.get(
+      `${siriusStore.state.selectedNode}/drives`
     );
-    drives.data.Ids.forEach(async (id) => {
-      const resp = await axios.get(
-        `${
-          siriusStore.state.selectedNode
-        }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
-          id
-        )}`
-      );
-
-      resp.data.drive.Id = id;
-      driveDetails.value.push(resp.data.drive);
-    });
+    drives.value = contracts.data.data.slice(0, 6);
 
     return {
-      driveDetails,
+      drives,
     };
   },
 };
