@@ -84,13 +84,272 @@
       <div class="tile-subtitle text-small">File(s)</div>
     </div>
   </div>
+  <ul class="pagination">
+    <template v-if="drives.data.pagination.totalPages < 11">
+      <li
+        class="page-item"
+        :class="{ disabled: drives.data.pagination.pageNumber == 1 }"
+      >
+        <router-link
+          :to="{
+            path: '/drives',
+            query: {
+              pageNumber:
+                drives.data.pagination.pageNumber == 1
+                  ? 1
+                  : drives.data.pagination.pageNumber - 1,
+            },
+          }"
+          class="btn btn-link"
+          >Prev</router-link
+        >
+      </li>
+      <li
+        v-for="n in drives.data.pagination.totalPages"
+        :key="n"
+        class="page-item"
+        :class="{ active: n == drives.data.pagination.pageNumber }"
+      >
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: n } }"
+          class="btn btn-link"
+          >{{ n }}</router-link
+        >
+      </li>
+      <li
+        class="page-item"
+        :class="{
+          disabled:
+            drives.data.pagination.pageNumber ==
+            drives.data.pagination.totalPages,
+        }"
+      >
+        <router-link
+          :to="{
+            path: '/drives',
+            query: {
+              pageNumber:
+                drives.data.pagination.pageNumber ==
+                drives.data.pagination.totalPages
+                  ? drives.data.pagination.totalPages
+                  : drives.data.pagination.pageNumber + 1,
+            },
+          }"
+          class="btn btn-link"
+          >Next</router-link
+        >
+      </li>
+    </template>
+    <template v-else-if="drives.data.pagination.pageNumber == 1">
+      <li class="page-item disabled">
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          class="btn btn-link"
+          >Prev</router-link
+        >
+      </li>
+      <li class="page-item active">
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          class="btn btn-link"
+          >1</router-link
+        >
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: 2 } }"
+          class="btn btn-link"
+          >2</router-link
+        >
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: 3 } }"
+          class="btn btn-link"
+          >3</router-link
+        >
+      </li>
+      <li class="page-item">
+        <span>...</span>
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.totalPages },
+          }"
+          class="btn btn-link"
+          >{{ drives.data.pagination.totalPages }}</router-link
+        >
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: 2 } }"
+          class="btn btn-link"
+          >Next</router-link
+        >
+      </li>
+    </template>
+    <template
+      v-else-if="
+        drives.data.pagination.pageNumber == drives.data.pagination.totalPages
+      "
+    >
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber - 1 },
+          }"
+          class="btn btn-link"
+          >Prev</router-link
+        >
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          class="btn btn-link"
+          >1</router-link
+        >
+      </li>
+      <li class="page-item">
+        <span>...</span>
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber - 2 },
+          }"
+          class="btn btn-link"
+          >{{ drives.data.pagination.pageNumber - 2 }}</router-link
+        >
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber - 1 },
+          }"
+          class="btn btn-link"
+          >{{ drives.data.pagination.pageNumber - 1 }}</router-link
+        >
+      </li>
+      <li class="page-item active">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.totalPages },
+          }"
+          class="btn btn-link"
+          >{{ drives.data.pagination.totalPages }}</router-link
+        >
+      </li>
+      <li class="page-item disabled">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.totalPages },
+          }"
+          class="btn btn-link"
+          >Next</router-link
+        >
+      </li>
+    </template>
+    <template v-else>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber - 1 },
+          }"
+          class="btn btn-link"
+          >Prev</router-link
+        >
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          class="btn btn-link"
+          >1</router-link
+        >
+      </li>
+      <li v-if="drives.data.pagination.pageNumber > 3" class="page-item">
+        <span>...</span>
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber - 1 },
+          }"
+          class="btn btn-link"
+          >{{ drives.data.pagination.pageNumber - 1 }}</router-link
+        >
+      </li>
+      <li class="page-item active">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber },
+          }"
+          class="btn btn-link"
+        >
+          {{ drives.data.pagination.pageNumber }}
+        </router-link>
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber + 1 },
+          }"
+          class="btn btn-link"
+        >
+          {{ drives.data.pagination.pageNumber + 1 }}
+        </router-link>
+      </li>
+      <li
+        v-if="
+          drives.data.pagination.pageNumber <
+          drives.data.pagination.totalPages - 2
+        "
+        class="page-item"
+      >
+        <span>...</span>
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.totalPages },
+          }"
+          class="btn btn-link"
+        >
+          {{ drives.data.pagination.totalPages }}
+        </router-link>
+      </li>
+      <li class="page-item">
+        <router-link
+          :to="{
+            path: '/drives',
+            query: { pageNumber: drives.data.pagination.pageNumber + 1 },
+          }"
+          class="btn btn-link"
+        >
+          Next
+        </router-link>
+      </li>
+    </template>
+  </ul>
 </template>
 
 <script>
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { getCurrentInstance, inject, ref } from "vue";
+import { getCurrentInstance, inject, ref, watch } from "vue";
+import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
 
 library.add(faHdd);
@@ -103,35 +362,59 @@ export default {
   async setup() {
     const internalInstance = getCurrentInstance();
     const siriusStore = inject("siriusStore");
+    const route = useRoute();
+    const router = useRouter();
     const drives = ref(null);
 
-    drives.value = await axios.get(`${siriusStore.state.selectedNode}/drives`);
-    drives.value.data.data.forEach(async (drive) => {
-      drive.drive.Id = internalInstance.appContext.config.globalProperties.$filters.publicKeyToCID(
-        drive.drive.multisig
-      );
-      drive.drive.count = {
-        folders: 0,
-        files: 0,
-      };
+    const fetchDrives = async (pageNumber) => {
+      drives.value = await axios.get(`
+        ${siriusStore.state.selectedNode}/drives${
+        pageNumber ? "?pageNumber=" + pageNumber : ""
+      }`);
 
-      if (drive.drive.state == 1 || drive.drive.state == 2) {
-        const resp = await axios.get(
-          `http://testnet1.dfms.io:6466/api/v1/drive/ls?arg=${drive.drive.Id}`
-        );
-
-        if (resp.data.List) {
-          resp.data.List.forEach((item) => {
-            if (item.Type == "dir") {
-              drive.drive.count.folders++;
-            } else {
-              drive.drive.count.files++;
-            }
-          });
-        }
+      if (pageNumber > drives.value.data.pagination.totalPages) {
+        router.replace({
+          path: "/drives",
+          query: { pageNumber: drives.value.data.pagination.totalPages },
+        });
+        return;
       }
-    });
 
+      drives.value.data.data.forEach(async (drive) => {
+        drive.drive.Id = internalInstance.appContext.config.globalProperties.$filters.publicKeyToCID(
+          drive.drive.multisig
+        );
+        drive.drive.count = {
+          folders: 0,
+          files: 0,
+        };
+
+        if (drive.drive.state == 1 || drive.drive.state == 2) {
+          const resp = await axios.get(
+            `http://testnet1.dfms.io:6466/api/v1/drive/ls?arg=${drive.drive.Id}`
+          );
+
+          if (resp.data.List) {
+            resp.data.List.forEach((item) => {
+              if (item.Type == "dir") {
+                drive.drive.count.folders++;
+              } else {
+                drive.drive.count.files++;
+              }
+            });
+          }
+        }
+      });
+    };
+
+    watch(
+      () => route.query["pageNumber"],
+      async (newPageNumber) => {
+        await fetchDrives(newPageNumber);
+      }
+    );
+
+    await fetchDrives(route.query["pageNumber"]);
     return {
       drives,
     };
@@ -146,11 +429,16 @@ export default {
 @import "spectre.css/src/mixins/avatar";
 @import "spectre.css/src/tiles";
 @import "spectre.css/src/avatars";
+@import "spectre.css/src/pagination";
 
 .tile {
   @include shadow-variant($unit-o);
   padding: $unit-2;
   margin: $unit-4 0;
   border: $border-width solid $border-color;
+}
+
+.pagination {
+  justify-content: center;
 }
 </style>
