@@ -8,6 +8,7 @@
         <thead>
           <tr>
             <th>ID</th>
+            <th>Public Key</th>
             <th>Host</th>
             <th>Location</th>
             <th>Type</th>
@@ -15,7 +16,7 @@
         </thead>
         <transition-group name="node-table" tag="tbody">
           <tr
-            v-for="(item, index) in tableData"
+            v-for="item in tableData"
             :key="item.id"
             :class="{
               'c-hand': item.details.longitude && item.details.latitude,
@@ -27,13 +28,10 @@
             "
           >
             <td data-th="ID">
-              <router-link
-                v-if="index == 0"
-                :to="{ name: 'Node Details', params: { nodeId: item.id } }"
-              >
-                {{ item.id }}
-              </router-link>
-              <div v-else>{{ item.id }}</div>
+              {{ item.id }}
+            </td>
+            <td data-th="Public Key">
+              {{ $filters.peerIdToPublicKey(item.id).substr(0, 15) }}...
             </td>
             <td data-th="Host">{{ item.details.IPv4 }}</td>
             <td data-th="Location">{{ item.details.country_name }}</td>
@@ -65,10 +63,6 @@ export default {
     };
 
     const pushData = (peerId, peerIp, nodeType, geolocationDetails) => {
-      if (geolocationDetails.IPv4 == "Not found") {
-        return;
-      }
-
       nodeDetails.value.push({
         id: peerId,
         type: nodeType,
@@ -109,27 +103,29 @@ export default {
     };
 
     onMounted(async () => {
-      const resp = await Promise.all([
-        axios.get("http://testnet1.dfms.io:6366/api/v1/net/id"),
-        axios.get("https://geolocation-db.com/json/18.141.182.252"),
-        axios.get("http://testnet1.dfms.io:6366/api/v1/net/peers"),
-      ]);
+      const resp = await axios.get(
+        "http://testnet1.dfms.io:6366/api/v1/net/peers"
+      );
 
-      map.value = new mapboxgl.Map({
-        container: "map",
-        style: "mapbox://styles/mapbox/light-v10",
-        center: [resp[1].data.longitude, resp[1].data.latitude],
-        zoom: 5,
-      });
-      map.value.addControl(new mapboxgl.FullscreenControl());
-
-      pushData(resp[0].data.ID, "testnet1.dfms.io", "SDN & SRN", resp[1].data);
-
-      resp[2].data.Peers.forEach(async (peer) => {
+      resp.data.Peers.forEach(async (peer) => {
         const peerDetail = peer.Addrs[0].split("/");
         const ipDetail = await axios.get(
           `https://geolocation-db.com/json/${peerDetail[2]}`
         );
+
+        if (ipDetail.data.IPv4 == "Not found") {
+          return;
+        }
+
+        if (nodeDetails.value.length == 0) {
+          map.value = new mapboxgl.Map({
+            container: "map",
+            style: "mapbox://styles/mapbox/light-v10",
+            center: [ipDetail.data.longitude, ipDetail.data.latitude],
+            zoom: 5,
+          });
+          map.value.addControl(new mapboxgl.FullscreenControl());
+        }
 
         pushData(
           peer.ID,

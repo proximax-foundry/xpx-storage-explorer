@@ -3,9 +3,8 @@ import { createRouter, createWebHistory } from "vue-router";
 import { appStore } from "@/store/app";
 
 const MainOverview = () => import("@/views/MainOverview.vue");
-const NodeLayout = () => import("@/views/NodeLayout.vue");
 const NodesMap = () => import("@/components/NodesMap.vue");
-const NodeState = () => import("@/components/NodeState.vue");
+const NodesStatus = () => import("@/components/NodesStatus.vue");
 const DriveLayout = () => import("@/views/DriveLayout.vue");
 const DrivesList = () => import("@/components/DrivesList.vue");
 const DriveState = () => import("@/components/DriveState.vue");
@@ -20,23 +19,6 @@ const router = createRouter({
       meta: {
         title: "Main Overview",
       },
-    },
-    {
-      path: "/nodes",
-      name: "Nodes",
-      component: NodeLayout,
-      children: [
-        {
-          path: "",
-          name: "Nodes Overview",
-          component: NodesMap,
-        },
-        {
-          path: ":nodeId",
-          name: "Node Details",
-          component: NodeState,
-        },
-      ],
     },
     {
       path: "/drives",
@@ -54,6 +36,22 @@ const router = createRouter({
           component: DriveState,
         },
       ],
+    },
+    {
+      path: "/nodes",
+      name: "Nodes",
+      component: NodesMap,
+      meta: {
+        title: "Nodes Overview",
+      },
+    },
+    {
+      path: "/status",
+      name: "Status",
+      component: NodesStatus,
+      meta: {
+        title: "Status of Nodes",
+      },
     },
   ],
 });

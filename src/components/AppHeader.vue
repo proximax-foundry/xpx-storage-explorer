@@ -41,7 +41,7 @@
     </div>
   </nav>
   <div class="column col-12 text-center">
-    <h1>{{ $route.name }}</h1>
+    <h1>{{ $route.meta.title || $route.name }}</h1>
   </div>
   <div class="column col-12">
     <SearchBar />

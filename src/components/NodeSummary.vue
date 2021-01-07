@@ -3,10 +3,11 @@
     <h3>Nodes</h3>
     <router-link to="/nodes" class="btn btn-link"> View All </router-link>
   </div>
-  <table class="table table-hover table-stack">
+  <table class="table table-striped table-stack">
     <thead>
       <tr>
         <th>ID</th>
+        <th>Public Key</th>
         <th>Host</th>
         <th>Location</th>
         <th>Type</th>
@@ -15,6 +16,9 @@
     <tbody>
       <tr v-for="item in nodeDetails" :key="item.Id">
         <td data-th="Id">{{ item.id }}</td>
+        <td data-th="Public Key">
+          {{ $filters.peerIdToPublicKey(item.id).substr(0, 15) }}...
+        </td>
         <td data-th="Host">{{ item.details.IPv4 }}</td>
         <td data-th="Location">{{ item.details.country_name }}</td>
         <td data-th="Type">{{ item.type }}</td>
