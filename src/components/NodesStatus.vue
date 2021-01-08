@@ -32,7 +32,9 @@
             </tr>
             <tr>
               <td class="text-bold">Type</td>
-              <td>{{ chainNodeDetail.roles == 2 ? "API" : "Peer" }}</td>
+              <td v-if="chainNodeDetail.roles == 1">API</td>
+              <td v-else-if="chainNodeDetail.roles == 2">API & Peer</td>
+              <td v-else>Peer</td>
             </tr>
             <tr>
               <td class="text-bold">Version</td>
