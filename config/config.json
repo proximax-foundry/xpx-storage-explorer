@@ -1,5 +1,5 @@
 {
-  "blockchainNodes": [
+  "chainNodes": [
     {
       "protocol": "http",
       "hostname": "bctestnet3.brimstone.xpxsirius.io",
@@ -12,7 +12,12 @@
     },
     {
       "protocol": "http",
-      "hostname": "bctestnet2.brimstone.xpxsirius.io",
+      "hostname": "bctestnet1.brimstone.xpxsirius.io",
+      "port": 3000
+    },
+    {
+      "protocol": "http",
+      "hostname": "bctestnet4.brimstone.xpxsirius.io",
       "port": 3000
     }
   ],

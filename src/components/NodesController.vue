@@ -2,15 +2,17 @@
   <div class="form-group">
     <select
       class="form-select"
-      @change="siriusStore.selectNewNode($event.target.value)"
+      @change="siriusStore.selectNewChainNode($event.target.value)"
     >
       <option
-        v-for="item in siriusStore.state.nodes"
-        :key="item"
-        :selected="item == siriusStore.state.selectedNode"
+        v-for="item in siriusStore.state.chainNodes"
+        :key="JSON.stringify(item)"
+        :selected="
+          $filters.parseNodeConfig(item) == siriusStore.state.selectedChainNode
+        "
         :value="JSON.stringify(item)"
       >
-        {{ parseNodeConfig(item) }}
+        {{ $filters.parseNodeConfig(item) }}
       </option>
     </select>
   </div>
@@ -53,16 +55,16 @@ export default {
     const addNewNode = async () => {
       loading.value = true;
       err.value = "";
-      const url = new parse(newUrl.value);
-      var nodeConfig = {};
-      nodeConfig["protocol"] = url.protocol.slice(0, -1);
-      nodeConfig["hostname"] = url.hostname;
-      nodeConfig["port"] = url.port;
+      const url = parse(newUrl.value, true);
+      const nodeConfigString = JSON.stringify({
+        protocol: url.protocol.slice(0, -1),
+        hostname: url.hostname,
+        port: url.port,
+      });
 
-      const nodeConfigString = JSON.stringify(nodeConfig);
-      const res = await siriusStore.addNode(nodeConfigString);
+      const res = await siriusStore.addChainNode(nodeConfigString);
       if (res == 1) {
-        siriusStore.selectNewNode(nodeConfigString);
+        siriusStore.selectNewChainNode(nodeConfigString);
         newUrl.value = "";
       } else if (res == 0) {
         err.value = "Invalid Node";
@@ -80,17 +82,6 @@ export default {
       newUrl,
       siriusStore,
     };
-  },
-  methods: {
-    parseNodeConfig(nodeConfig) {
-      return (
-        nodeConfig.protocol +
-        "://" +
-        nodeConfig.hostname +
-        ":" +
-        nodeConfig.port
-      );
-    },
   },
 };
 </script>

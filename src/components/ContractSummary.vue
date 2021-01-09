@@ -38,7 +38,7 @@ export default {
     });
 
     const contracts = await axios.get(
-      `${siriusStore.state.selectedNode}/drives`
+      `${siriusStore.state.selectedChainNode}/drives`
     );
     drives.total = contracts.data.pagination.totalEntries;
 

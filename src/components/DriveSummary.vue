@@ -148,7 +148,7 @@ export default {
     const drives = ref(null);
 
     const contracts = await axios.get(
-      `${siriusStore.state.selectedNode}/drives`
+      `${siriusStore.state.selectedChainNode}/drives`
     );
     drives.value = contracts.data.data.slice(0, 6);
 

@@ -43,7 +43,7 @@ export default {
     contracts.data.Ids.forEach(async (id) => {
       const driveDetails = await axios.get(
         `${
-          siriusStore.state.selectedNode
+          siriusStore.state.selectedChainNode
         }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
           id
         )}`

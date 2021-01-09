@@ -137,9 +137,9 @@ export default {
 
     try {
       const resp = await Promise.all([
-        axios.get(siriusStore.state.selectedNode + "/node/info"),
-        axios.get(siriusStore.state.selectedNode + "/diagnostic/server"),
-        axios.get(siriusStore.state.selectedNode + "/diagnostic/storage"),
+        axios.get(siriusStore.state.selectedChainNode + "/node/info"),
+        axios.get(siriusStore.state.selectedChainNode + "/diagnostic/server"),
+        axios.get(siriusStore.state.selectedChainNode + "/diagnostic/storage"),
       ]);
 
       chainNodeDetail.value = {
@@ -151,7 +151,7 @@ export default {
 
       for (let i = 0; i < 5; i++) {
         const start = new Date();
-        await fetch(siriusStore.state.selectedNode + "/chain/height", {
+        await fetch(siriusStore.state.selectedChainNode + "/chain/height", {
           mode: "no-cors",
         });
         chainNodeDetail.value.ping += new Date() - start;

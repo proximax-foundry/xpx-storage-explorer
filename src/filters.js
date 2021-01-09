@@ -1,3 +1,4 @@
+import utils from "@/utils";
 import { Convert, Deadline, UInt64 } from "tsjs-xpx-chain-sdk";
 import multibase from "multibase";
 import multihash from "multihashes";
@@ -12,6 +13,7 @@ function concatUint8Arrays(startArr, endArr) {
 }
 
 export default {
+  ...utils,
   getRelativeTimestamp(blockTimestamp) {
     return new Date(
       blockTimestamp.compact() + Deadline.timestampNemesisBlock * 1000

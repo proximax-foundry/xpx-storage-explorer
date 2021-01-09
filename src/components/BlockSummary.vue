@@ -84,13 +84,13 @@ export default {
     };
 
     const listenerStop = (start) => {
-      siriusStore.stopListener();
+      siriusStore.stopChainWSListener();
 
       if (start) {
-        siriusStore.wsListener
+        siriusStore.chainWSListener
           .open()
           .then(() => {
-            siriusStore.wsListener.newBlock().subscribe(
+            siriusStore.chainWSListener.newBlock().subscribe(
               async (blockInfo) => {
                 await updateInfo(blockInfo.height);
               },

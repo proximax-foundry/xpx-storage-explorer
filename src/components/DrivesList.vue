@@ -368,7 +368,7 @@ export default {
 
     const fetchDrives = async (pageNumber) => {
       drives.value = await axios.get(`
-        ${siriusStore.state.selectedNode}/drives${
+        ${siriusStore.state.selectedChainNode}/drives${
         pageNumber ? "?pageNumber=" + pageNumber : ""
       }`);
 
