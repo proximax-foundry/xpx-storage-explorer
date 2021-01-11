@@ -28,17 +28,16 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { inject, ref } from "vue";
 import axios from "axios";
 
 export default {
   name: "NodeSummary",
   async setup() {
+    const siriusStore = inject("siriusStore");
     const nodeDetails = ref([]);
 
-    const peers = await axios.get(
-      "http://testnet1.dfms.io:6366/api/v1/net/peers"
-    );
+    const peers = await axios.get(siriusStore.peersHttp);
     let i = 0;
     while (nodeDetails.value.length < 5 && i < peers.data.Peers.length) {
       const peerDetail = peers.data.Peers[i].Addrs[0].split("/");

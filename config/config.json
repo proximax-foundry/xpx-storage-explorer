@@ -21,6 +21,23 @@
       "port": 3000
     }
   ],
+  "storageNodes": [
+    {
+      "protocol": "http",
+      "hostname": "testnet1.dfms.io",
+      "port": 6366
+    },
+    {
+      "protocol": "http",
+      "hostname": "testnet1.dfms.io",
+      "port": 6466
+    },
+    {
+      "protocol": "http",
+      "hostname": "testnet2.dfms.io",
+      "port": 6466
+    }
+  ],
   "networkType": {
     "name": "Public Testnet",
     "number": 168

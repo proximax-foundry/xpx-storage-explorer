@@ -58,7 +58,14 @@
             </tr>
             <tr>
               <td class="text-bold">Average Ping</td>
-              <td>
+              <td
+                :class="{
+                  'text-success': chainNodeDetail.ping < 100,
+                  'text-warning':
+                    chainNodeDetail.ping >= 100 && chainNodeDetail.ping < 250,
+                  'text-error': chainNodeDetail.ping >= 250,
+                }"
+              >
                 {{
                   chainNodeDetail.ping > 0
                     ? chainNodeDetail.ping + " ms"
@@ -109,7 +116,15 @@
             </tr>
             <tr>
               <td class="text-bold">Average Ping</td>
-              <td>
+              <td
+                :class="{
+                  'text-success': storageNodeDetail.ping < 100,
+                  'text-warning':
+                    storageNodeDetail.ping >= 100 &&
+                    storageNodeDetail.ping < 250,
+                  'text-error': storageNodeDetail.ping >= 250,
+                }"
+              >
                 {{
                   storageNodeDetail.ping > 0
                     ? storageNodeDetail.ping + " ms"
@@ -162,16 +177,14 @@ export default {
     }
 
     try {
-      const storageResp = await axios.get(
-        "http://testnet1.dfms.io:6366/api/v1/net/id"
-      );
+      const storageResp = await axios.get(siriusStore.netIdHttp);
       storageNodeDetail.value = storageResp.data;
-      storageNodeDetail.value.type = "SDN & SRN";
+      storageNodeDetail.value.type = siriusStore.state.selectedStorageNodeType;
       storageNodeDetail.value.ping = 0;
 
       for (let i = 0; i < 5; i++) {
         const start = new Date();
-        await fetch("http://testnet1.dfms.io:5000", { mode: "no-cors" });
+        await fetch(siriusStore.netIdHttp, { mode: "no-cors" });
         storageNodeDetail.value.ping += new Date() - start;
       }
       storageNodeDetail.value.ping /= 5;

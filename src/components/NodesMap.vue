@@ -44,13 +44,14 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { inject, ref, onMounted } from "vue";
 import axios from "axios";
 import mapboxgl from "mapbox-gl/dist/mapbox-gl";
 
 export default {
   name: "NodesMap",
   setup() {
+    const siriusStore = inject("siriusStore");
     const map = ref(null);
     const nodeDetails = ref([]);
     const mapMarker = require("@/assets/map-pointer.svg");
@@ -103,9 +104,7 @@ export default {
     };
 
     onMounted(async () => {
-      const resp = await axios.get(
-        "http://testnet1.dfms.io:6366/api/v1/net/peers"
-      );
+      const resp = await axios.get(siriusStore.peersHttp);
 
       resp.data.Peers.forEach(async (peer) => {
         const peerDetail = peer.Addrs[0].split("/");

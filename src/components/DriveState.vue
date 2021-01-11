@@ -200,7 +200,7 @@
             <div class="tile-action">
               <a
                 class="btn btn-link"
-                :href="`http://testnet1.dfms.io:6366/api/v1/drive/file?arg=${$route.params.cid[0]}&arg=${item.Cid['/']}`"
+                :href="driveFileHttp($route.params.cid[0], item.Cid['/'])"
                 :download="item.Name"
               >
                 <i class="icon icon-download"></i>
@@ -250,13 +250,12 @@ export default {
         )}`
       ),
       axios.get(
-        `http://testnet1.dfms.io:6366/api/v1/drive/ls?arg=${
-          route.params.cid[0]
-        }${
+        siriusStore.driveLsHttp(
+          route.params.cid[0],
           route.params.cid.length > 1
-            ? "&arg=" + route.params.cid.reduce(removeDrivePath)
+            ? route.params.cid.reduce(removeDrivePath)
             : ""
-        }`
+        )
       ),
     ]);
 
@@ -279,6 +278,7 @@ export default {
 
     return {
       driveDetails,
+      driveFileHttp: siriusStore.driveFileHttp,
     };
   },
 };

@@ -36,9 +36,7 @@ export default {
       available: 0,
     });
 
-    const contracts = await axios.get(
-      "http://testnet1.dfms.io:6366/api/v1/contract/ls"
-    );
+    const contracts = await axios.get(siriusStore.contractLsHttp);
 
     contracts.data.Ids.forEach(async (id) => {
       const driveDetails = await axios.get(

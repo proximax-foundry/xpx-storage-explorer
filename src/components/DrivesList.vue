@@ -390,9 +390,7 @@ export default {
         };
 
         if (drive.drive.state == 1 || drive.drive.state == 2) {
-          const resp = await axios.get(
-            `http://testnet1.dfms.io:6466/api/v1/drive/ls?arg=${drive.drive.Id}`
-          );
+          const resp = await axios.get(siriusStore.driveLsHttp(drive.drive.Id));
 
           if (resp.data.List) {
             resp.data.List.forEach((item) => {
