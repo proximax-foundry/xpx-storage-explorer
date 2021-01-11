@@ -1,6 +1,6 @@
 {
   "name": "xpx-storage-explorer",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "description": "ProximaX Sirius Storage Explorer",
   "private": true,
   "scripts": {

@@ -1,5 +1,6 @@
 <template>
-  <div class="form-group">
+  <div class="input-group">
+    <span class="input-group-addon">Chain</span>
     <select
       class="form-select"
       @change="siriusStore.selectNewChainNode($event.target.value)"
@@ -16,18 +17,42 @@
       </option>
     </select>
   </div>
+  <div class="input-group mt-1">
+    <span class="input-group-addon">Storage</span>
+    <select
+      class="form-select"
+      @change="siriusStore.selectNewStorageNode($event.target.value)"
+    >
+      <option
+        v-for="item in siriusStore.state.storageNodes"
+        :key="JSON.stringify(item)"
+        :selected="
+          $filters.parseNodeConfig(item) ==
+          siriusStore.state.selectedStorageNode
+        "
+        :value="JSON.stringify(item)"
+      >
+        {{ $filters.parseNodeConfig(item) }}
+      </option>
+    </select>
+  </div>
+  <div class="divider text-center" data-content="Add New Node"></div>
   <form
     class="form-group"
     :class="{ 'has-error': err }"
     @submit.prevent="addNewNode"
   >
     <div class="input-group">
+      <select v-model="addNodeType" class="form-select select-fit">
+        <option :selected="addNodeType == 'Chain'">Chain</option>
+        <option :selected="addNodeType == 'Storage'">Storage</option>
+      </select>
       <input
         v-model="newUrl"
         type="text"
         class="form-input"
         :disabled="loading"
-        placeholder="Add Node"
+        placeholder="New Node Url"
       />
       <button
         class="btn btn-primary input-group-btn"
@@ -47,10 +72,11 @@ import parse from "url-parse";
 export default {
   name: "NodesController",
   setup() {
+    const siriusStore = inject("siriusStore");
     const err = ref("");
     const loading = ref(false);
     const newUrl = ref("");
-    const siriusStore = inject("siriusStore");
+    const addNodeType = ref("Storage");
 
     const addNewNode = async () => {
       loading.value = true;
@@ -62,14 +88,26 @@ export default {
         port: url.port,
       });
 
-      const res = await siriusStore.addChainNode(nodeConfigString);
-      if (res == 1) {
-        siriusStore.selectNewChainNode(nodeConfigString);
-        newUrl.value = "";
-      } else if (res == 0) {
-        err.value = "Invalid Node";
+      if (addNodeType.value == "Chain") {
+        const res = await siriusStore.addChainNode(nodeConfigString);
+        if (res == 1) {
+          siriusStore.selectNewChainNode(nodeConfigString);
+          newUrl.value = "";
+        } else if (res == 0) {
+          err.value = "Invalid Node";
+        } else {
+          err.value = "Node Exist";
+        }
       } else {
-        err.value = "Node Exist";
+        const res = await siriusStore.addStorageNode(nodeConfigString);
+        if (res == 1) {
+          siriusStore.selectNewStorageNode(nodeConfigString);
+          newUrl.value = "";
+        } else if (res == 0) {
+          err.value = "Invalid Node";
+        } else {
+          err.value = "Node Exist";
+        }
       }
 
       loading.value = false;
@@ -77,6 +115,7 @@ export default {
 
     return {
       addNewNode,
+      addNodeType,
       err,
       loading,
       newUrl,
@@ -85,3 +124,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.input-group {
+  .select-fit {
+    flex: 0 0 auto;
+  }
+}
+</style>
