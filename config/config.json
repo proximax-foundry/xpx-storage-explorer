@@ -29,13 +29,18 @@
     },
     {
       "protocol": "http",
-      "hostname": "testnet1.dfms.io",
-      "port": 6466
+      "hostname": "testnet2.dfms.io",
+      "port": 6366
     },
     {
       "protocol": "http",
-      "hostname": "testnet2.dfms.io",
-      "port": 6466
+      "hostname": "testnet3.dfms.io",
+      "port": 6366
+    },
+    {
+      "protocol": "http",
+      "hostname": "testnet4.dfms.io",
+      "port": 6366
     }
   ],
   "networkType": {

@@ -1,21 +1,14 @@
 <template>
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title h5 text-ellipsis">
-        Blockchain Node
-        <span
-          class="label label-rounded"
-          :class="{
-            'label-success': chainNodeDetail != undefined,
-            'label-error': chainNodeDetail == undefined,
-          }"
-        >
-          {{ chainNodeDetail != undefined ? "Online" : "Offline" }}
-        </span>
+  <LoadingState v-if="!chainNodeDetail" />
+  <template v-else>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title h5 text-ellipsis">Blockchain Node</div>
       </div>
-    </div>
-    <template v-if="chainNodeDetail != undefined">
-      <div class="card-body">
+      <div v-if="chainNodeDetail.err" class="card-body">
+        <ErrorState :err="chainNodeDetail.err" />
+      </div>
+      <div v-else class="card-body">
         <table class="table table-striped">
           <tbody>
             <tr>
@@ -76,26 +69,19 @@
           </tbody>
         </table>
       </div>
-    </template>
-  </div>
-  <div class="divider"></div>
-  <div class="card">
-    <div class="card-header">
-      <div class="card-title h5 text-ellipsis">
-        Storage Node
-        <span
-          class="label label-rounded"
-          :class="{
-            'label-success': storageNodeDetail != undefined,
-            'label-error': storageNodeDetail == undefined,
-          }"
-        >
-          {{ storageNodeDetail != undefined ? "Online" : "Offline" }}
-        </span>
-      </div>
     </div>
-    <template v-if="storageNodeDetail != undefined">
-      <div class="card-body">
+  </template>
+  <div class="divider"></div>
+  <LoadingState v-if="!storageNodeDetail" />
+  <template v-else>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title h5 text-ellipsis">Storage Node</div>
+      </div>
+      <div v-if="storageNodeDetail.err" class="card-body">
+        <ErrorState :err="storageNodeDetail.err" />
+      </div>
+      <div v-else class="card-body">
         <table class="table table-striped">
           <tbody>
             <tr>
@@ -135,62 +121,98 @@
           </tbody>
         </table>
       </div>
-    </template>
-  </div>
+    </div>
+  </template>
 </template>
 
 <script>
-import { inject, ref } from "vue";
+import ErrorState from "@/components/ErrorState.vue";
+import LoadingState from "@/components/LoadingState.vue";
+import { inject, onMounted, ref, watch } from "vue";
 import axios from "axios";
 
 export default {
   name: "NodesStatus",
-  async setup() {
+  components: {
+    ErrorState,
+    LoadingState,
+  },
+  setup() {
     const siriusStore = inject("siriusStore");
     const chainNodeDetail = ref(null);
     const storageNodeDetail = ref(null);
 
-    try {
-      const resp = await Promise.all([
-        axios.get(siriusStore.state.selectedChainNode + "/node/info"),
-        axios.get(siriusStore.state.selectedChainNode + "/diagnostic/server"),
-        axios.get(siriusStore.state.selectedChainNode + "/diagnostic/storage"),
-      ]);
+    const loadChainNodeDetails = async () => {
+      try {
+        const resp = await Promise.all([
+          axios.get(siriusStore.state.selectedChainNode + "/node/info"),
+          axios.get(siriusStore.state.selectedChainNode + "/diagnostic/server"),
+          axios.get(siriusStore.state.selectedChainNode + "/diagnostic/storage"),
+        ]);
 
-      chainNodeDetail.value = {
-        ...resp[0].data,
-        ...resp[1].data,
-        ...resp[2].data,
-      };
-      chainNodeDetail.value.ping = 0;
+        chainNodeDetail.value = {
+          ...resp[0].data,
+          ...resp[1].data,
+          ...resp[2].data,
+        };
+        chainNodeDetail.value.ping = 0;
 
-      for (let i = 0; i < 5; i++) {
-        const start = new Date();
-        await fetch(siriusStore.state.selectedChainNode + "/chain/height", {
-          mode: "no-cors",
-        });
-        chainNodeDetail.value.ping += new Date() - start;
+        for (let i = 0; i < 5; i++) {
+          const start = new Date();
+          await fetch(siriusStore.state.selectedChainNode + "/chain/height", {
+            mode: "no-cors",
+          });
+          chainNodeDetail.value.ping += new Date() - start;
+        }
+        chainNodeDetail.value.ping /= 5;
+      } catch (err) {
+        console.error("Chain Node Status Error", err);
+        chainNodeDetail.value = {
+          err: "Unable to fetch details from selected chain node",
+        };
       }
-      chainNodeDetail.value.ping /= 5;
-    } catch (err) {
-      console.error("Chain Node Status Error", err);
-    }
+    };
 
-    try {
-      const storageResp = await axios.get(siriusStore.netIdHttp);
-      storageNodeDetail.value = storageResp.data;
-      storageNodeDetail.value.type = siriusStore.state.selectedStorageNodeType;
-      storageNodeDetail.value.ping = 0;
+    const loadStorageNodeDetails = async () => {
+      try {
+        const storageResp = await axios.get(siriusStore.netIdHttp);
+        storageNodeDetail.value = storageResp.data;
+        storageNodeDetail.value.type = siriusStore.state.selectedStorageNodeType;
+        storageNodeDetail.value.ping = 0;
 
-      for (let i = 0; i < 5; i++) {
-        const start = new Date();
-        await fetch(siriusStore.netIdHttp, { mode: "no-cors" });
-        storageNodeDetail.value.ping += new Date() - start;
+        for (let i = 0; i < 5; i++) {
+          const start = new Date();
+          await fetch(siriusStore.netIdHttp, { mode: "no-cors" });
+          storageNodeDetail.value.ping += new Date() - start;
+        }
+        storageNodeDetail.value.ping /= 5;
+      } catch (err) {
+        console.error("Storage Node Status Error", err);
+        storageNodeDetail.value = {
+          err: "Unable to fetch details from selected storage node",
+        };
       }
-      storageNodeDetail.value.ping /= 5;
-    } catch (err) {
-      console.error("Storage Node Status Error", err);
-    }
+    };
+
+    onMounted(async () => {
+      await Promise.all([loadChainNodeDetails(), loadStorageNodeDetails()]);
+    });
+
+    watch(
+      () => siriusStore.state.selectedChainNode,
+      async () => {
+        chainNodeDetail.value = null;
+        await loadChainNodeDetails();
+      }
+    );
+
+    watch(
+      () => siriusStore.state.selectedStorageNode,
+      async () => {
+        storageNodeDetail.value = null;
+        await loadStorageNodeDetails();
+      }
+    );
 
     return {
       chainNodeDetail,

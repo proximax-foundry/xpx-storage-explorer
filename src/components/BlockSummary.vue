@@ -1,14 +1,8 @@
 <template>
-  <div class="card text-center">
-    <template v-if="isLoading">
-      <div class="card-header">
-        <div class="card-title h4">Loading</div>
-      </div>
-      <div class="card-body">
-        <div class="loading loading-lg"></div>
-      </div>
-    </template>
-    <template v-else>
+  <LoadingState v-if="!blockInfo" />
+  <template v-else>
+    <ErrorState v-if="blockInfo.err" :err="blockInfo.err" small-text="true" />
+    <div v-else class="card text-center">
       <div class="card-header">
         <div class="card-subtitle">
           <small class="text-bold">Latest Block</small>
@@ -27,11 +21,13 @@
         <FontAwesomeIcon :icon="['fas', 'cube']" size="lg" />
         Upcoming block: <b>{{ blockInfo.height.compact() + 1 }}</b>
       </div>
-    </template>
-  </div>
+    </div>
+  </template>
 </template>
 
 <script>
+import ErrorState from "@/components/ErrorState.vue";
+import LoadingState from "@/components/LoadingState.vue";
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faCube } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
@@ -39,6 +35,7 @@ import {
   computed,
   getCurrentInstance,
   inject,
+  onMounted,
   onUnmounted,
   ref,
   watch,
@@ -49,14 +46,16 @@ library.add(faCube);
 export default {
   name: "BlockSummary",
   components: {
+    ErrorState,
     FontAwesomeIcon,
+    LoadingState,
   },
-  async setup() {
+  setup() {
     const internalInstance = getCurrentInstance();
     const siriusStore = inject("siriusStore");
     const nowTimestamp = ref(new Date().getTime());
     const blockInfo = ref(null);
-    const isLoading = ref(false);
+
     const timeElapsed = computed(() =>
       Math.floor(
         (nowTimestamp.value -
@@ -80,6 +79,9 @@ export default {
           .toPromise();
       } catch (err) {
         console.error("Chain Height Error", err);
+        blockInfo.value = {
+          err: "Unable to fetch latest block from selected node",
+        };
       }
     };
 
@@ -90,47 +92,44 @@ export default {
         siriusStore.chainWSListener
           .open()
           .then(() => {
-            siriusStore.chainWSListener.newBlock().subscribe(
-              async (blockInfo) => {
-                await updateInfo(blockInfo.height);
-              },
-              (err) => console.error("New Block Websocket Error", err)
-            );
+            siriusStore.chainWSListener
+              .newBlock()
+              .subscribe(
+                async (blockInfo) => await updateInfo(blockInfo.height)
+              );
           })
           .catch((err) => {
             console.error("Websocket Error", err);
+            blockInfo.value = {
+              err: "Unable to listen to websocket from selected node",
+            };
           });
       }
     };
+
+    onMounted(async () => {
+      await updateInfo();
+      listenerStop(true);
+      setInterval(() => {
+        nowTimestamp.value += 1000;
+      }, 1000);
+    });
 
     onUnmounted(() => {
       listenerStop(false);
     });
 
     watch(
-      async () => siriusStore.chainHttp,
+      () => siriusStore.state.selectedChainNode,
       async () => {
-        isLoading.value = true;
         blockInfo.value = null;
         await updateInfo();
         listenerStop(true);
-        isLoading.value = false;
       }
     );
 
-    onUnmounted(() => {
-      listenerStop(false);
-    });
-
-    await updateInfo();
-    listenerStop(true);
-    setInterval(() => {
-      nowTimestamp.value += 1000;
-    }, 1000);
-
     return {
       blockInfo,
-      isLoading,
       timeElapsed,
     };
   },

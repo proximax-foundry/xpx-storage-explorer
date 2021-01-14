@@ -3,9 +3,9 @@ import { createRouter, createWebHistory } from "vue-router";
 import { appStore } from "@/store/app";
 
 const MainOverview = () => import("@/views/MainOverview.vue");
-const NodesMap = () => import("@/components/NodesMap.vue");
+const PeersMap = () => import("@/components/PeersMap.vue");
 const NodesStatus = () => import("@/components/NodesStatus.vue");
-const DriveLayout = () => import("@/views/DriveLayout.vue");
+const DrivesLayout = () => import("@/views/DrivesLayout.vue");
 const DrivesList = () => import("@/components/DrivesList.vue");
 const DriveState = () => import("@/components/DriveState.vue");
 
@@ -23,7 +23,7 @@ const router = createRouter({
     {
       path: "/drives",
       name: "Drives",
-      component: DriveLayout,
+      component: DrivesLayout,
       children: [
         {
           path: "",
@@ -38,11 +38,11 @@ const router = createRouter({
       ],
     },
     {
-      path: "/nodes",
-      name: "Nodes",
-      component: NodesMap,
+      path: "/peers",
+      name: "Peers Map",
+      component: PeersMap,
       meta: {
-        title: "Nodes Overview",
+        title: "Map of Peer Nodes",
       },
     },
     {

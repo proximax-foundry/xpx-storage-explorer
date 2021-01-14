@@ -3,7 +3,9 @@
     <div class="empty-icon text-error">
       <i class="icon icon-3x icon-stop"></i>
     </div>
-    <div class="empty-title h1">{{ error }}</div>
+    <div class="empty-title h1" :class="{ 'text-small': smallText }">
+      {{ error }}
+    </div>
   </div>
 </template>
 
@@ -14,6 +16,10 @@ export default {
     err: {
       type: String,
       default: "Error communicating with selected node",
+    },
+    smallText: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props) {

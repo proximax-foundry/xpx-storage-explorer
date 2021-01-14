@@ -1,76 +1,38 @@
 <template>
   <div class="columns">
     <div class="column col-4">
-      <SuspenseTemplate>
-        <template #default>
-          <BlockSummary />
-        </template>
-      </SuspenseTemplate>
+      <BlockSummary />
     </div>
     <div class="column col-4">
-      <SuspenseTemplate>
-        <template #default>
-          <StorageSummary />
-        </template>
-      </SuspenseTemplate>
+      <StorageSummary />
     </div>
     <div class="column col-4">
-      <SuspenseTemplate>
-        <template #default>
-          <ContractSummary />
-        </template>
-      </SuspenseTemplate>
+      <ContractSummary />
     </div>
     <div class="column col-12">
-      <SuspenseTemplate>
-        <template #default>
-          <NodeSummary />
-        </template>
-      </SuspenseTemplate>
+      <PeersSummary />
     </div>
     <div class="column col-12">
-      <SuspenseTemplate>
-        <template #default>
-          <DriveSummary />
-        </template>
-      </SuspenseTemplate>
+      <DrivesSummary />
     </div>
   </div>
 </template>
 
 <script>
-import { defineAsyncComponent } from "vue";
-import SuspenseTemplate from "@/components/SuspenseLoadErrorTemplate.vue";
+import BlockSummary from "@/components/BlockSummary.vue";
+import ContractSummary from "@/components/ContractSummary.vue";
+import DrivesSummary from "@/components/DrivesSummary.vue";
+import PeersSummary from "@/components/PeersSummary.vue";
+import StorageSummary from "@/components/StorageSummary.vue";
 
 export default {
   name: "MainOverview",
   components: {
-    SuspenseTemplate,
-    BlockSummary: defineAsyncComponent(() =>
-      import(
-        "@/components/BlockSummary.vue" /* webpackChunkName: "blockSummary" */
-      )
-    ),
-    ContractSummary: defineAsyncComponent(() =>
-      import(
-        "@/components/ContractSummary.vue" /* webpackChunkName: "contractSummary" */
-      )
-    ),
-    DriveSummary: defineAsyncComponent(() =>
-      import(
-        "@/components/DriveSummary.vue" /* webpackChunkName: "driveSummary" */
-      )
-    ),
-    NodeSummary: defineAsyncComponent(() =>
-      import(
-        "@/components/NodeSummary.vue" /* webpackChunkName: "nodeSummary" */
-      )
-    ),
-    StorageSummary: defineAsyncComponent(() =>
-      import(
-        "@/components/StorageSummary.vue" /* webpackChunkName: "storageSummary" */
-      )
-    ),
+    BlockSummary,
+    ContractSummary,
+    DrivesSummary,
+    PeersSummary,
+    StorageSummary,
   },
 };
 </script>

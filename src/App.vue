@@ -8,13 +8,7 @@
   </header>
 
   <section class="container grid-xl full-height">
-    <router-view v-slot="{ Component }">
-      <SuspenseTemplate>
-        <template #default>
-          <component :is="Component" :key="$route.path" />
-        </template>
-      </SuspenseTemplate>
-    </router-view>
+    <router-view />
   </section>
 
   <footer>
@@ -30,14 +24,12 @@ import { appStore } from "@/store/app";
 import { siriusStore } from "@/store/sirius";
 import AppFooter from "@/components/AppFooter.vue";
 import AppHeader from "@/components/AppHeader.vue";
-import SuspenseTemplate from "@/components/SuspenseLoadErrorTemplate.vue";
 
 export default {
   name: appStore.name,
   components: {
     AppFooter,
     AppHeader,
-    SuspenseTemplate,
   },
   setup() {
     provide("appStore", appStore);
