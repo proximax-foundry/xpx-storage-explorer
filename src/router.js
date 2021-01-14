@@ -2,55 +2,52 @@ import { nextTick } from "vue";
 import { createRouter, createWebHistory } from "vue-router";
 import { appStore } from "@/store/app";
 
-const MainOverview = () => import("@/views/MainOverview.vue");
-const PeersMap = () => import("@/components/PeersMap.vue");
-const NodesStatus = () => import("@/components/NodesStatus.vue");
-const DrivesLayout = () => import("@/views/DrivesLayout.vue");
-const DrivesList = () => import("@/components/DrivesList.vue");
-const DriveState = () => import("@/components/DriveState.vue");
-
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
       path: "/",
       name: "Overview",
-      component: MainOverview,
+      component: () => import("@/views/MainOverview.vue"),
       meta: {
         title: "Main Overview",
+        showOnNav: true,
       },
     },
     {
       path: "/drives",
       name: "Drives",
-      component: DrivesLayout,
-      children: [
-        {
-          path: "",
-          name: "Drives Overview",
-          component: DrivesList,
-        },
-        {
-          path: ":cid+",
-          name: "Drive Details",
-          component: DriveState,
-        },
-      ],
+      component: () => import("@/components/DrivesList.vue"),
+      meta: {
+        title: "Drives Overview",
+        showOnNav: true,
+      },
+    },
+    {
+      path: "/drive/:cid+",
+      name: "Drive",
+      component: () => import("@/components/DriveState.vue"),
+      meta: {
+        title: "Drive Details",
+        showOnNav: false,
+      },
     },
     {
       path: "/peers",
-      name: "Peers Map",
-      component: PeersMap,
+      name: "Peers",
+      component: () => import("@/components/PeersMap.vue"),
       meta: {
         title: "Map of Peer Nodes",
+        showOnNav: true,
       },
     },
     {
       path: "/status",
       name: "Status",
-      component: NodesStatus,
+      component: () => import("@/components/NodesStatus.vue"),
       meta: {
         title: "Status of Nodes",
+        showOnNav: true,
       },
     },
   ],

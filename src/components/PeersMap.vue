@@ -60,6 +60,7 @@ export default {
   },
   setup() {
     const siriusStore = inject("siriusStore");
+    const appStore = inject("appStore");
     const map = ref(null);
     const mapMarkers = ref([]);
     const peerDetails = ref([]);
@@ -81,7 +82,7 @@ export default {
           try {
             const peerDetail = resp.data.Peers[i].Addrs[0].split("/");
             const ipDetail = await axios.get(
-              `https://geolocation-db.com/json/${peerDetail[2]}`
+              appStore.ipLocationHttp(peerDetail[2])
             );
 
             if (
@@ -130,7 +131,9 @@ export default {
 
         if (peerDetails.value.length == 0 && resp.data.Peers.length > 0) {
           errorMessage.value =
-            "Please check if 'https://geolocation-db.com' is blocked by your AdBlocker and unblock it to view more information on each peer node";
+            "Please check if " +
+            appStore.ipLocationHostname +
+            " is blocked by your AdBlocker and unblock it to view more information on each peer node";
         } else {
           mapFocus(
             peerDetails.value[0].details.longitude,

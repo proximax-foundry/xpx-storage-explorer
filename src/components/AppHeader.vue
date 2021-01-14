@@ -18,12 +18,22 @@
       <router-link
         v-for="route in $router.options.routes"
         :key="route.path"
+        v-slot="{ navigate, href, isActive, isExactActive }"
         :to="route.path"
-        active-class="text-muted"
-        exact-active-class="disabled"
-        class="btn btn-link mr-1"
+        custom
       >
-        {{ route.name }}
+        <a
+          v-if="route.meta.showOnNav"
+          :href="href"
+          class="btn btn-link mr-1"
+          :class="{
+            'text-muted': isActive,
+            disabled: isExactActive,
+          }"
+          @click="navigate"
+        >
+          {{ route.name }}
+        </a>
       </router-link>
       <div class="dropdown dropdown-right">
         <button class="btn btn-link dropdown-toggle" tabindex="0">

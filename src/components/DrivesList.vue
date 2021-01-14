@@ -11,22 +11,32 @@
         <div class="tile-icon p-2">
           <figure class="avatar">
             <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
-            <i v-if="item.drive.state == 1" class="avatar-presence away"></i>
+            <i
+              v-if="item.drive.state == 1"
+              class="avatar-presence away tooltip"
+              data-tooltip="Pending"
+            ></i>
             <i
               v-else-if="item.drive.state == 2"
-              class="avatar-presence online"
+              class="avatar-presence online tooltip"
+              data-tooltip="Active"
             ></i>
             <i
               v-else-if="item.drive.state == 3"
-              class="avatar-presence busy"
+              class="avatar-presence busy tooltip"
+              data-tooltip="Completed"
             ></i>
-            <i v-else class="avatar-presence"></i>
+            <i
+              v-else
+              class="avatar-presence tooltip"
+              data-tooltip="Not Active"
+            ></i>
           </figure>
         </div>
         <div class="tile-content">
           <div class="tile-title h5">
             <router-link
-              :to="{ name: 'Drive Details', params: { cid: [item.drive.Id] } }"
+              :to="{ name: 'Drive', params: { cid: [item.drive.Id] } }"
             >
               {{ item.drive.Id.substr(0, 15) }}...
             </router-link>
@@ -476,6 +486,7 @@ export default {
 @import "spectre.css/src/tiles";
 @import "spectre.css/src/avatars";
 @import "spectre.css/src/pagination";
+@import "spectre.css/src/tooltips";
 
 .tile {
   @include shadow-variant($unit-o);

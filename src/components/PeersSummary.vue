@@ -1,12 +1,12 @@
 <template>
+  <div class="text-center">
+    <h3>Peer Nodes</h3>
+    <router-link to="/peers" class="btn btn-link">View All</router-link>
+  </div>
   <ErrorState v-if="errorMessage" :err="errorMessage" />
   <template v-else>
     <LoadingState v-if="peerDetails.length == 0" />
-    <div v-else class="text-center">
-      <h3>Peer Nodes</h3>
-      <router-link to="/peers" class="btn btn-link">View All</router-link>
-    </div>
-    <table class="table table-striped table-stack">
+    <table v-else class="table table-striped table-stack">
       <thead>
         <tr>
           <th>ID</th>
@@ -45,6 +45,7 @@ export default {
   },
   setup() {
     const siriusStore = inject("siriusStore");
+    const appStore = inject("appStore");
     const peerDetails = ref([]);
     const errorMessage = ref(null);
 
@@ -57,7 +58,7 @@ export default {
           const peerDetail = peers.data.Peers[i].Addrs[0].split("/");
           try {
             const ipDetail = await axios.get(
-              `https://geolocation-db.com/json/${peerDetail[2]}`
+              appStore.ipLocationHttp(peerDetail[2])
             );
 
             if (
@@ -86,7 +87,9 @@ export default {
 
         if (peerDetails.value.length == 0 && peers.data.Peers.length > 0) {
           errorMessage.value =
-            "Please check if 'https://geolocation-db.com' is blocked by your AdBlocker and unblock it to view more information on each peer node";
+            "Please check if " +
+            appStore.ipLocationHostname +
+            " is blocked by your AdBlocker and unblock it to view more information on each peer node";
         }
       } catch (err) {
         console.error("Peer List Error", err);

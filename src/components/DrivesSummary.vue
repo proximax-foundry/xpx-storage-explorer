@@ -1,12 +1,12 @@
 <template>
+  <div class="text-center">
+    <h3>Drives</h3>
+    <router-link to="/drives" class="btn btn-link">View All</router-link>
+  </div>
   <ErrorState v-if="errorMessage" :err="errorMessage" />
   <template v-else>
     <LoadingState v-if="drives.length == 0" />
-    <div v-else class="text-center">
-      <h3>Drives</h3>
-      <router-link to="/drives" class="btn btn-link">View All</router-link>
-    </div>
-    <div class="columns">
+    <div v-else class="columns">
       <div
         v-for="item in drives"
         :key="item.drive.multisig"
@@ -36,7 +36,7 @@
             <div class="card-title h5">
               <router-link
                 :to="{
-                  name: 'Drive Details',
+                  name: 'Drive',
                   params: {
                     cid: [$filters.publicKeyToCID(item.drive.multisig)],
                   },
@@ -131,7 +131,7 @@
           <div class="card-footer text-center">
             <router-link
               :to="{
-                name: 'Drive Details',
+                name: 'Drive',
                 params: { cid: [$filters.publicKeyToCID(item.drive.multisig)] },
               }"
               class="btn"

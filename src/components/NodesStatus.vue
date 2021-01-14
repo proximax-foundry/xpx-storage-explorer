@@ -147,7 +147,9 @@ export default {
         const resp = await Promise.all([
           axios.get(siriusStore.state.selectedChainNode + "/node/info"),
           axios.get(siriusStore.state.selectedChainNode + "/diagnostic/server"),
-          axios.get(siriusStore.state.selectedChainNode + "/diagnostic/storage"),
+          axios.get(
+            siriusStore.state.selectedChainNode + "/diagnostic/storage"
+          ),
         ]);
 
         chainNodeDetail.value = {
@@ -177,7 +179,8 @@ export default {
       try {
         const storageResp = await axios.get(siriusStore.netIdHttp);
         storageNodeDetail.value = storageResp.data;
-        storageNodeDetail.value.type = siriusStore.state.selectedStorageNodeType;
+        storageNodeDetail.value.type =
+          siriusStore.state.selectedStorageNodeType;
         storageNodeDetail.value.ping = 0;
 
         for (let i = 0; i < 5; i++) {
