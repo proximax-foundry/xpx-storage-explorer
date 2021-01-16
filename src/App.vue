@@ -41,7 +41,6 @@ export default {
 <style lang="scss">
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@300;400;500;600;700&display=swap");
 @import "@/assets/main";
-
 @import "spectre.css/src/variables";
 @import "spectre.css/src/mixins";
 @import "spectre.css/src/normalize";

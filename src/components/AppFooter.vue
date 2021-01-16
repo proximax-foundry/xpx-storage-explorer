@@ -144,19 +144,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { computed, inject } from "vue";
 
-library.add(
-  faTelegramPlane,
-  faTwitter,
-  faGithub,
-  faInstagram,
-  faRedditAlien,
-  faFacebookF,
-  faMediumM,
-  faYoutube,
-  faLinkedinIn,
-  faBtc
-);
-
 export default {
   name: "AppFooter",
   components: {
@@ -171,6 +158,19 @@ export default {
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
     };
 
+    library.add(
+      faTelegramPlane,
+      faTwitter,
+      faGithub,
+      faInstagram,
+      faRedditAlien,
+      faFacebookF,
+      faMediumM,
+      faYoutube,
+      faLinkedinIn,
+      faBtc
+    );
+
     return {
       siriusStore,
       scrollToTop,
@@ -181,6 +181,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import "@/assets/main";
 @import "spectre.css/src/variables";
 
 .btn {

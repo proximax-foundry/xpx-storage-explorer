@@ -17,7 +17,7 @@ const router = createRouter({
     {
       path: "/drives",
       name: "Drives",
-      component: () => import("@/components/DrivesList.vue"),
+      component: () => import("@/views/DrivesList.vue"),
       meta: {
         title: "Drives Overview",
         showOnNav: true,
@@ -26,7 +26,7 @@ const router = createRouter({
     {
       path: "/drive/:cid+",
       name: "Drive",
-      component: () => import("@/components/DriveState.vue"),
+      component: () => import("@/views/DriveBrowse.vue"),
       meta: {
         title: "Drive Details",
         showOnNav: false,
@@ -35,7 +35,7 @@ const router = createRouter({
     {
       path: "/peers",
       name: "Peers",
-      component: () => import("@/components/PeersMap.vue"),
+      component: () => import("@/views/PeersMap.vue"),
       meta: {
         title: "Map of Peer Nodes",
         showOnNav: true,
@@ -44,7 +44,7 @@ const router = createRouter({
     {
       path: "/status",
       name: "Status",
-      component: () => import("@/components/NodesStatus.vue"),
+      component: () => import("@/views/NodesStatus.vue"),
       meta: {
         title: "Status of Nodes",
         showOnNav: true,
