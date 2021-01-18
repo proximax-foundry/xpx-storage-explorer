@@ -20,6 +20,8 @@
         :key="item.id"
         :class="{
           'c-hand': map && item.details.longitude && item.details.latitude,
+          'bg-primary': item.id == $route.query.peerId,
+          'text-light': item.id == $route.query.peerId,
         }"
         @click="
           map && item.details.longitude && item.details.latitude
@@ -42,6 +44,7 @@
 <script>
 import ErrorState from "@/components/ErrorState.vue";
 import { inject, onMounted, ref, watch } from "vue";
+import { useRoute } from "vue-router";
 import axios from "axios";
 import mapboxgl from "mapbox-gl/dist/mapbox-gl";
 
@@ -67,6 +70,7 @@ export default {
   emits: ["update:showMap"],
   setup(props, context) {
     const appStore = inject("appStore");
+    const route = useRoute();
     const peerDetails = ref([]);
     const errorMessage = ref(null);
     const mapMarkers = ref([]);
@@ -95,11 +99,19 @@ export default {
             continue;
           }
 
-          peerDetails.value.push({
-            id: props.peersInfo[i].ID,
-            type: peerDetail[4] == 63666 ? "SDN" : "SRN",
-            details: ipDetail.data,
-          });
+          if (route.query.peerId == props.peersInfo[i].ID) {
+            peerDetails.value.unshift({
+              id: props.peersInfo[i].ID,
+              type: peerDetail[4] == 63666 ? "SDN" : "SRN",
+              details: ipDetail.data,
+            });
+          } else {
+            peerDetails.value.push({
+              id: props.peersInfo[i].ID,
+              type: peerDetail[4] == 63666 ? "SDN" : "SRN",
+              details: ipDetail.data,
+            });
+          }
 
           if (props.map) {
             var figure = document.createElement("figure");

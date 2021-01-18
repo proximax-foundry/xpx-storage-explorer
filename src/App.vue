@@ -88,6 +88,12 @@ h6,
   @include shadow-variant($unit-o);
 }
 
+.input-group {
+  .select-fit {
+    flex: 0 0 auto;
+  }
+}
+
 @media (max-width: $size-lg) {
   .table:not(.table-scroll) {
     &.table-stack {

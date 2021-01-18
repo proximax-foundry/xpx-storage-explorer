@@ -43,9 +43,12 @@
     @submit.prevent="addNewNode"
   >
     <div class="input-group">
-      <select v-model="addNodeType" class="form-select select-fit">
-        <option :selected="addNodeType == 'Chain'">Chain</option>
-        <option :selected="addNodeType == 'Storage'">Storage</option>
+      <select
+        class="form-select select-fit"
+        @change="addNodeType = $event.target.value"
+      >
+        <option :selected="addNodeType == 0" :value="0">Chain</option>
+        <option :selected="addNodeType == 1" :value="1">Storage</option>
       </select>
       <input
         v-model="newUrl"
@@ -61,7 +64,7 @@
         <i class="icon icon-plus"></i>
       </button>
     </div>
-    <p v-if="err" class="form-input-hint">{{ err }}</p>
+    <div v-if="err" class="form-input-hint">{{ err }}</div>
   </form>
 </template>
 
@@ -76,7 +79,7 @@ export default {
     const err = ref("");
     const loading = ref(false);
     const newUrl = ref("");
-    const addNodeType = ref("Storage");
+    const addNodeType = ref(1);
 
     const addNewNode = async () => {
       loading.value = true;
@@ -88,7 +91,7 @@ export default {
         port: url.port,
       });
 
-      if (addNodeType.value == "Chain") {
+      if (addNodeType.value == 0) {
         const res = await siriusStore.addChainNode(nodeConfigString);
         if (res == 1) {
           siriusStore.selectNewChainNode(nodeConfigString);
@@ -124,11 +127,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.input-group {
-  .select-fit {
-    flex: 0 0 auto;
-  }
-}
-</style>
