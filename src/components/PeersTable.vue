@@ -31,7 +31,7 @@
       >
         <td data-th="Id">{{ item.id }}</td>
         <td data-th="Public Key">
-          {{ $filters.peerIdToPublicKey(item.id).substr(0, 15) }}...
+          {{ $filters.peerIdToPublicKey(item.id) }}
         </td>
         <td data-th="Host">{{ item.details.IPv4 }}</td>
         <td data-th="Location">{{ item.details.country_name }}</td>
@@ -126,10 +126,14 @@ export default {
               new mapboxgl.Marker(figure)
                 .setLngLat([ipDetail.data.longitude, ipDetail.data.latitude])
                 .setPopup(
-                  new mapboxgl.Popup({ offset: [40, -20] }).setHTML(
+                  new mapboxgl.Popup({
+                    offset: [40, -20],
+                    maxWidth: "none",
+                    focusAfterOpen: false,
+                  }).setHTML(
                     "<p><strong>" +
-                      props.peersInfo[i].ID.substr(0, 15) +
-                      "...</strong><br />(" +
+                      props.peersInfo[i].ID +
+                      "</strong><br />(" +
                       ipDetail.data.IPv4 +
                       ")</p>"
                   )
@@ -200,13 +204,44 @@ export default {
 @import "spectre.css/src/avatars";
 
 .table {
-  tbody {
-    tr:nth-of-type(even) {
-      background: $light-color;
-    }
+  table-layout: fixed;
+  width: 100%;
 
-    tr:hover {
-      background: $bg-color-dark;
+  th:nth-child(1) {
+    width: 40%;
+  }
+
+  th:nth-child(3),
+  th:nth-child(4) {
+    width: 15%;
+  }
+
+  th:nth-child(5) {
+    width: 5%;
+  }
+
+  td:nth-child(1),
+  td:nth-child(2) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  &.table-striped {
+    tbody {
+      tr:nth-of-type(even) {
+        background: $light-color;
+      }
+    }
+  }
+
+  &.table-hover {
+    tbody {
+      tr {
+        &:hover {
+          background: $bg-color-dark;
+        }
+      }
     }
   }
 }

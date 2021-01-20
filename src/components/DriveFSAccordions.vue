@@ -74,10 +74,10 @@
                 {{ item.Name }}
               </div>
               <div class="tile-subtitle text-gray">
-                Cid:
-                <b>{{ item.Cid["/"].substr(0, 15) }}...</b>
-                · Size:
+                Size:
                 <b>{{ $filters.bytesToSize(item.Size) }}</b>
+                · Cid:
+                <b>{{ item.Cid["/"] }}</b>
               </div>
             </div>
             <div class="tile-action">

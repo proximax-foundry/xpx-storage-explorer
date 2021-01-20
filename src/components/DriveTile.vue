@@ -1,24 +1,33 @@
 <template>
   <div class="tile">
     <div class="tile-icon p-2">
-      <figure class="avatar">
+      <figure
+        v-if="drive.state == 1"
+        class="avatar tooltip"
+        data-tooltip="Pending"
+      >
         <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
-        <i
-          v-if="drive.state == 1"
-          class="avatar-presence away tooltip"
-          data-tooltip="Pending"
-        ></i>
-        <i
-          v-else-if="drive.state == 2"
-          class="avatar-presence online tooltip"
-          data-tooltip="Active"
-        ></i>
-        <i
-          v-else-if="drive.state == 3"
-          class="avatar-presence busy tooltip"
-          data-tooltip="Completed"
-        ></i>
-        <i v-else class="avatar-presence tooltip" data-tooltip="Not Active"></i>
+        <i class="avatar-presence away"></i>
+      </figure>
+      <figure
+        v-else-if="drive.state == 2"
+        class="avatar tooltip"
+        data-tooltip="Active"
+      >
+        <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
+        <i class="avatar-presence online"></i>
+      </figure>
+      <figure
+        v-else-if="drive.state == 3"
+        class="avatar tooltip"
+        data-tooltip="Completed"
+      >
+        <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
+        <i class="avatar-presence busy"></i>
+      </figure>
+      <figure v-else class="avatar tooltip" data-tooltip="Not Active">
+        <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
+        <i class="avatar-presence"></i>
       </figure>
     </div>
     <div class="tile-content text-ellipsis">
@@ -31,7 +40,7 @@
         >
           {{ $filters.publicKeyToCID(drive.multisig) }}
         </router-link>
-        <div class="bar">
+        <div class="bar my-2">
           <div
             class="bar-item"
             :class="{
