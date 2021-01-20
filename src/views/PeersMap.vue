@@ -4,8 +4,8 @@
       <div id="map"></div>
     </div>
     <div class="card-body">
-      <ErrorState v-if="!peersInfo" err="Unable to fetch peers from node" />
-      <LoadingState v-else-if="peersInfo.length == 0" />
+      <LoadingState v-if="!peersInfo" />
+      <ErrorState v-else-if="peersInfo.err" :err="peersInfo.err" />
       <PeersTable
         v-else
         v-model:show-map="showMap"
@@ -35,7 +35,7 @@ export default {
     const siriusStore = inject("siriusStore");
     const showMap = ref(true);
     const map = ref(null);
-    const peersInfo = ref([]);
+    const peersInfo = ref(null);
 
     mapboxgl.accessToken =
       "pk.eyJ1Ijoiai1tb3JhMTUiLCJhIjoiY2p5MGY4a2RhMDJqZjNucXh0anl0ZDd2eCJ9.Lsq-ETN03fbVIctkd9lV3Q";
@@ -43,13 +43,21 @@ export default {
     const loadDetails = async () => {
       try {
         const peers = await axios.get(siriusStore.peersHttp);
-        peersInfo.value = peers.data.Peers;
-        showMap.value = true;
+        if (peers.data.Peers) {
+          peersInfo.value = peers.data.Peers;
+        } else {
+          peersInfo.value = {
+            err: "Node does not seem to be connected to network",
+          };
+        }
       } catch (err) {
         console.error("Peer List Error", err);
-        peersInfo.value = null;
-        showMap.value = false;
+        peersInfo.value = {
+          err: "Unable to fetch peers from node",
+        };
       }
+
+      peersInfo.value.err ? (showMap.value = false) : (showMap.value = true);
     };
 
     onMounted(async () => {
@@ -64,7 +72,7 @@ export default {
     watch(
       () => siriusStore.state.selectedStorageNode,
       async () => {
-        peersInfo.value = [];
+        peersInfo.value = null;
         await loadDetails();
       }
     );

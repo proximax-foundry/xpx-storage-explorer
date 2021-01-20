@@ -28,8 +28,8 @@
         <h3>Peer Nodes</h3>
         <router-link to="/peers" class="btn btn-link">View All</router-link>
       </div>
-      <ErrorState v-if="!peersInfo" err="Unable to fetch peers from node" />
-      <LoadingState v-else-if="peersInfo.length == 0" />
+      <LoadingState v-if="!peersInfo" />
+      <ErrorState v-else-if="peersInfo.err" :err="peersInfo.err" />
       <PeersTable v-else :peers-info="peersInfo" :limit-results="5" />
     </div>
     <div class="column col-12">
@@ -37,12 +37,17 @@
         <h3>Drives</h3>
         <router-link to="/drives" class="btn btn-link">View All</router-link>
       </div>
-      <ErrorState
-        v-if="!drivesInfo"
-        err="Unable to fetch list of drives from node"
-      />
-      <LoadingState v-else-if="drivesInfo.length == 0" />
-      <DrivesCards v-else :drives-info="drivesInfo" />
+      <LoadingState v-if="!drivesInfo" />
+      <ErrorState v-else-if="drivesInfo.err" :err="drivesInfo.err" />
+      <div v-else class="columns">
+        <div
+          v-for="item in drivesInfo"
+          :key="item.drive.multisig"
+          class="column col-4 col-md-6 col-sm-12 my-0"
+        >
+          <DriveTile :drive="item.drive" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -50,7 +55,7 @@
 <script>
 import BlockCard from "@/components/BlockCard.vue";
 import ContractCard from "@/components/ContractCard.vue";
-import DrivesCards from "@/components/DrivesCards.vue";
+import DriveTile from "@/components/DriveTile.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import LoadingState from "@/components/LoadingState.vue";
 import PeersTable from "@/components/PeersTable.vue";
@@ -63,7 +68,7 @@ export default {
   components: {
     BlockCard,
     ContractCard,
-    DrivesCards,
+    DriveTile,
     ErrorState,
     LoadingState,
     PeersTable,
@@ -74,8 +79,8 @@ export default {
     const siriusStore = inject("siriusStore");
     const blockInfo = ref(null);
     const contractInfo = ref(null);
-    const drivesInfo = ref([]);
-    const peersInfo = ref([]);
+    const drivesInfo = ref(null);
+    const peersInfo = ref(null);
     const storageInfo = ref(null);
 
     const updateBlockInfo = async (latestHeight) => {
@@ -97,61 +102,73 @@ export default {
       }
     };
 
-    const updateContractInfo = async () => {
+    const updateStorageInfo = async () => {
       try {
-        const contracts = await axios.get(
-          `${siriusStore.state.selectedChainNode}/drives`
-        );
+        let drives = await axios.get(siriusStore.drivesHttp());
 
         contractInfo.value = {
           total: 0,
           active: 0,
         };
 
-        contractInfo.value.total = contracts.data.pagination.totalEntries;
-        drivesInfo.value = contracts.data.data.slice(0, 6);
-      } catch (err) {
-        console.error("Drives Error", err);
-        contractInfo.value = {
-          err: "Unable to fetch list of drives from node",
-        };
-        drivesInfo.value = null;
-      }
-    };
-
-    const updateStorageInfo = async () => {
-      try {
-        const contracts = await axios.get(siriusStore.contractLsHttp);
-
         storageInfo.value = {
           used: 0,
           available: 0,
         };
 
-        if (contracts.data.Ids) {
-          contracts.data.Ids.forEach(async (id) => {
-            try {
-              const driveDetails = await axios.get(
-                `${
-                  siriusStore.state.selectedChainNode
-                }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
-                  id
-                )}`
-              );
+        if (drives.data.pagination.totalEntries > 0) {
+          drivesInfo.value = drives.data.data.slice(0, 6);
+          contractInfo.value.total = drives.data.pagination.totalEntries;
 
+          while (
+            drives.data.pagination.pageNumber !=
+            drives.data.pagination.totalPages + 1
+          ) {
+            drives.data.data.forEach((drive) => {
+              if (drive.drive.state == 2) {
+                contractInfo.value.active += 1;
+              }
               storageInfo.value.available += internalInstance.appContext.config.globalProperties.$filters.numberArrayToCompact(
-                driveDetails.data.drive.size
+                drive.drive.size
               );
               storageInfo.value.used += internalInstance.appContext.config.globalProperties.$filters.numberArrayToCompact(
-                driveDetails.data.drive.occupiedSpace
+                drive.drive.occupiedSpace
+              );
+            });
+
+            if (
+              drives.data.pagination.pageNumber ==
+              drives.data.pagination.totalPages
+            ) {
+              break;
+            }
+
+            try {
+              drives = await axios.get(
+                siriusStore.drivesHttp(drives.data.pagination.pageNumber + 1)
               );
             } catch (err) {
-              console.error("Drive Contract (" + id + ") Error", err);
+              console.error("List Drives Error", err);
+              contractInfo.value = drivesInfo.value = {
+                err: "Unable to fetch list of drives from node",
+              };
+              storageInfo.value = {
+                err: "Unable to fetch storage information from node",
+              };
+
+              break;
             }
-          });
+          }
+        } else {
+          contractInfo.value = drivesInfo.value = storageInfo.value = {
+            err: "No drives found",
+          };
         }
       } catch (err) {
-        console.error("List Contracts Error", err);
+        console.error("List Drives Error", err);
+        contractInfo.value = drivesInfo.value = {
+          err: "Unable to fetch list of drives from node",
+        };
         storageInfo.value = {
           err: "Unable to fetch storage information from node",
         };
@@ -161,10 +178,18 @@ export default {
     const updatePeersInfo = async () => {
       try {
         const peers = await axios.get(siriusStore.peersHttp);
-        peersInfo.value = peers.data.Peers;
+        if (peers.data.Peers) {
+          peersInfo.value = peers.data.Peers;
+        } else {
+          peersInfo.value = {
+            err: "Node does not seem to be connected to network",
+          };
+        }
       } catch (err) {
         console.error("Peer List Error", err);
-        peersInfo.value = null;
+        peersInfo.value = {
+          err: "Unable to fetch peers from node",
+        };
       }
     };
 
@@ -197,10 +222,8 @@ export default {
     watch(
       () => siriusStore.state.selectedChainNode,
       async () => {
-        blockInfo.value = null;
-        contractInfo.value = null;
-        drivesInfo.value = [];
-        await Promise.all([updateBlockInfo(), updateContractInfo()]);
+        blockInfo.value = contractInfo.value = drivesInfo.value = storageInfo.value = null;
+        await Promise.all([updateBlockInfo(), updateStorageInfo()]);
         listenerStop(true);
       }
     );
@@ -208,18 +231,12 @@ export default {
     watch(
       () => siriusStore.state.selectedStorageNode,
       async () => {
-        storageInfo.value = null;
-        peersInfo.value = [];
-        await Promise.all([updateStorageInfo(), updatePeersInfo()]);
+        peersInfo.value = null;
+        await updatePeersInfo();
       }
     );
 
-    Promise.all([
-      updateBlockInfo(),
-      updateContractInfo(),
-      updateStorageInfo(),
-      updatePeersInfo(),
-    ]);
+    Promise.all([updateBlockInfo(), updateStorageInfo(), updatePeersInfo()]);
     listenerStop(true);
 
     return {

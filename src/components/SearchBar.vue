@@ -62,7 +62,9 @@ export default {
     const searchPeers = async (peerId) => {
       try {
         const peers = await axios.get(siriusStore.peersHttp);
-        return (peers.data.Peers.find((peer) => peer.ID == peerId)) ? true : false;
+        return peers.data.Peers.find((peer) => peer.ID == peerId)
+          ? true
+          : false;
       } catch {
         return false;
       }

@@ -67,11 +67,11 @@ export default {
       try {
         const resp = await Promise.all([
           axios.get(
-            `${
-              siriusStore.state.selectedChainNode
-            }/drive/${internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
-              route.params.cid[0]
-            )}`
+            siriusStore.driveHttp(
+              internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
+                route.params.cid[0]
+              )
+            )
           ),
           axios.get(
             siriusStore.driveLsHttp(

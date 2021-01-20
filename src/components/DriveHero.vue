@@ -8,11 +8,35 @@
     }"
   >
     <div class="hero-body">
-      <div v-if="driveInfo.state == 1">Pending</div>
-      <div v-else-if="driveInfo.state == 2">Active</div>
-      <div v-else-if="driveInfo.state == 3">Completed</div>
-      <div v-else>Not Active</div>
+      <h4 v-if="driveInfo.state == 1">Pending</h4>
+      <h4 v-else-if="driveInfo.state == 2">Active</h4>
+      <h4 v-else-if="driveInfo.state == 3">Completed</h4>
+      <h4 v-else>Not Active</h4>
       <h1 class="text-ellipsis">{{ $route.params.cid[0] }}</h1>
+      <div class="bar">
+        <div
+          class="bar-item"
+          :style="`width:${Math.round(
+            ($filters.numberArrayToCompact(driveInfo.occupiedSpace) /
+              $filters.numberArrayToCompact(driveInfo.size)) *
+              100
+          )}%`"
+        ></div>
+      </div>
+      <p>
+        Storage:
+        <b>
+          {{
+            $filters.bytesToSize(
+              $filters.numberArrayToCompact(driveInfo.occupiedSpace)
+            )
+          }}
+          of
+          {{
+            $filters.bytesToSize($filters.numberArrayToCompact(driveInfo.size))
+          }}
+        </b>
+      </p>
       <div class="columns">
         <div class="column col-3 col-md-4">
           <div>Public Key:</div>
@@ -33,24 +57,6 @@
           <div class="text-bold">
             {{ $filters.numberArrayToCompact(driveInfo.duration) }}
             Block(s)
-          </div>
-        </div>
-        <div class="column col-md-4">
-          <div>Storage Used:</div>
-          <div class="text-bold">
-            {{
-              $filters.bytesToSize(
-                $filters.numberArrayToCompact(driveInfo.occupiedSpace)
-              )
-            }}
-          </div>
-          <div>Storage:</div>
-          <div class="text-bold">
-            {{
-              $filters.bytesToSize(
-                $filters.numberArrayToCompact(driveInfo.size)
-              )
-            }}
           </div>
         </div>
         <div class="column col-md-4">
@@ -111,6 +117,7 @@ export default {
 @import "spectre.css/src/variables";
 @import "spectre.css/src/mixins/shadow";
 @import "spectre.css/src/hero";
+@import "spectre.css/src/bars";
 
 .hero {
   @include shadow-variant($unit-1);

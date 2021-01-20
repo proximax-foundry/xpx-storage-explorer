@@ -35,6 +35,16 @@ const blockHttp = computed(() => new BlockHttp(state.selectedChainNode));
 const chainHttp = computed(() => new ChainHttp(state.selectedChainNode));
 const nodeHttp = computed(() => new NodeHttp(state.selectedChainNode));
 
+const driveHttp = (drivePublicKey) => {
+  return `${state.selectedChainNode}/drive/${drivePublicKey}`;
+};
+
+const drivesHttp = (pageNumber) => {
+  return `${state.selectedChainNode}/drives${
+    pageNumber && pageNumber != "" ? "?pageNumber=" + pageNumber : ""
+  }`;
+};
+
 // Awaiting storage SDK for proper infrastructure implementation
 const netIdHttp = computed(() => state.selectedStorageNode + "/api/v1/net/id");
 const peersHttp = computed(
@@ -209,6 +219,8 @@ export const siriusStore = readonly({
   blockHttp,
   chainHttp,
   nodeHttp,
+  driveHttp,
+  drivesHttp,
   netIdHttp,
   peersHttp,
   contractLsHttp,

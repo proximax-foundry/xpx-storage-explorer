@@ -1,5 +1,5 @@
 <template>
-  <div class="tile tile-centered">
+  <div class="tile">
     <div class="tile-icon p-2">
       <figure class="avatar">
         <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" class="m-1" />
@@ -21,73 +21,89 @@
         <i v-else class="avatar-presence tooltip" data-tooltip="Not Active"></i>
       </figure>
     </div>
-    <div class="tile-content">
-      <div class="tile-title h5">
-        <router-link :to="{ name: 'Drive', params: { cid: [drive.Id] } }">
-          {{ drive.Id.substr(0, 15) }}...
+    <div class="tile-content text-ellipsis">
+      <div class="tile-title h5 text-ellipsis">
+        <router-link
+          :to="{
+            name: 'Drive',
+            params: { cid: [$filters.publicKeyToCID(drive.multisig)] },
+          }"
+        >
+          {{ $filters.publicKeyToCID(drive.multisig) }}
         </router-link>
+        <div class="bar">
+          <div
+            class="bar-item"
+            :class="{
+              'bg-warning':
+                Math.round(
+                  ($filters.numberArrayToCompact(drive.occupiedSpace) /
+                    $filters.numberArrayToCompact(drive.size)) *
+                    100
+                ) > 50 &&
+                Math.round(
+                  ($filters.numberArrayToCompact(drive.occupiedSpace) /
+                    $filters.numberArrayToCompact(drive.size)) *
+                    100
+                ) < 75,
+              'bg-error':
+                Math.round(
+                  ($filters.numberArrayToCompact(drive.occupiedSpace) /
+                    $filters.numberArrayToCompact(drive.size)) *
+                    100
+                ) >= 75,
+            }"
+            :style="`width:${Math.round(
+              ($filters.numberArrayToCompact(drive.occupiedSpace) /
+                $filters.numberArrayToCompact(drive.size)) *
+                100
+            )}%`"
+          >
+            {{
+              $filters.bytesToSize(
+                $filters.numberArrayToCompact(drive.occupiedSpace)
+              )
+            }}
+            of
+            {{
+              $filters.bytesToSize($filters.numberArrayToCompact(drive.size))
+            }}
+          </div>
+        </div>
       </div>
       <div class="tile-subtitle text-small">
-        Owner:
-        <b>{{ drive.owner.substr(0, 15) }}...</b>
+        <div class="text-ellipsis">
+          Owner:
+          <b>{{ drive.owner }}</b>
+        </div>
+        <div>
+          Created:
+          <b>Block {{ $filters.numberArrayToCompact(drive.start) }}</b>
+        </div>
+        <div>
+          Duration:
+          <b>{{ $filters.numberArrayToCompact(drive.duration) }} Block(s)</b>
+        </div>
+        <div>
+          Billing Price:
+          <b>{{ $filters.numberArrayToCompact(drive.billingPrice) }} SO</b>
+        </div>
+        <div>
+          Billing Period:
+          <b>
+            {{ $filters.numberArrayToCompact(drive.billingPeriod) }}
+            Block(s)
+          </b>
+        </div>
+        <div>
+          Replicas:
+          <b>{{ drive.replicas }}</b>
+        </div>
+        <div>
+          Approvers:
+          <b>{{ drive.percentApprovers }} %</b>
+        </div>
       </div>
-    </div>
-    <div class="tile-content hide-lg">
-      <div class="tile-title">
-        Created:
-        <b>Block {{ $filters.numberArrayToCompact(drive.start) }}</b>
-      </div>
-      <div class="tile=subtitle">
-        Duration:
-        <b>{{ $filters.numberArrayToCompact(drive.duration) }} Block(s)</b>
-      </div>
-    </div>
-    <div class="tile-content hide-md">
-      <div class="tile-title">
-        Storage Used:
-        <b>{{
-          $filters.bytesToSize(
-            $filters.numberArrayToCompact(drive.occupiedSpace)
-          )
-        }}</b>
-      </div>
-      <div class="tile=subtitle">
-        Storage:
-        <b>{{
-          $filters.bytesToSize($filters.numberArrayToCompact(drive.size))
-        }}</b>
-      </div>
-    </div>
-    <div class="tile-content hide-lg">
-      <div class="tile-title">
-        Billing Price:
-        <b>{{ $filters.numberArrayToCompact(drive.billingPrice) }} SO</b>
-      </div>
-      <div class="tile=subtitle">
-        Billing Period:
-        <b>
-          {{ $filters.numberArrayToCompact(drive.billingPeriod) }}
-          Block(s)
-        </b>
-      </div>
-    </div>
-    <div class="tile-content hide-xl">
-      <div class="tile-title">
-        Replicas:
-        <b>{{ drive.replicas }}</b>
-      </div>
-      <div class="tile-subtitle">
-        Approvers:
-        <b>{{ drive.percentApprovers }} %</b>
-      </div>
-    </div>
-    <div class="tile-action text-center mx-2">
-      <div class="tile-title h5">{{ drive.count.folders }}</div>
-      <div class="tile-subtitle text-small">Folder(s)</div>
-    </div>
-    <div class="tile-action text-center mx-2">
-      <div class="tile-title h5">{{ drive.count.files }}</div>
-      <div class="tile-subtitle text-small">File(s)</div>
     </div>
   </div>
 </template>
@@ -122,12 +138,17 @@ export default {
 @import "spectre.css/src/mixins/avatar";
 @import "spectre.css/src/tiles";
 @import "spectre.css/src/avatars";
+@import "spectre.css/src/bars";
 @import "spectre.css/src/tooltips";
 
 .tile {
   @include shadow-variant($unit-o);
   padding: $unit-2;
-  margin: $unit-4 0;
+  margin: $unit-2 0;
   border: $border-width solid $border-color;
+}
+
+.bar {
+  background: $gray-color;
 }
 </style>
