@@ -40,7 +40,7 @@ export default {
 
     const fetchDrives = async (pageNumber) => {
       try {
-        const resp = await axios.get(siriusStore.drivesHttp(pageNumber));
+        const resp = await axios.get(siriusStore.drivesHttp(24, pageNumber));
 
         if (pageNumber > resp.data.pagination.totalPages) {
           router.replace({

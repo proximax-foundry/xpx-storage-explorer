@@ -19,6 +19,9 @@ export default {
       blockTimestamp.compact() + Deadline.timestampNemesisBlock * 1000
     );
   },
+  blocksToDays(numBlocks) {
+    return `~${Math.round(numBlocks / (4 * 60 * 24))} days`;
+  },
   // CREDITS: https://gist.github.com/lanqy/5193417
   bytesToSize(bytes) {
     const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB"];

@@ -1,12 +1,6 @@
 import utils from "@/utils";
 import { computed, reactive, ref, readonly } from "vue";
-import {
-  BlockHttp,
-  ChainHttp,
-  Listener,
-  NetworkHttp,
-  NodeHttp,
-} from "tsjs-xpx-chain-sdk";
+import { BlockHttp, ChainHttp, Listener, NodeHttp } from "tsjs-xpx-chain-sdk";
 import axios from "axios";
 
 const config = require("@/../config/config.json");
@@ -19,7 +13,7 @@ const listenerChainWS = ref(null);
 const state = reactive({
   chainNodes: config.chainNodes,
   storageNodes: config.storageNodes,
-  networkType: config.networkType,
+  network: config.network,
   selectedChainNode: computed(() =>
     utils.parseNodeConfig(currentChainNode.value)
   ),
@@ -39,10 +33,8 @@ const driveHttp = (drivePublicKey) => {
   return `${state.selectedChainNode}/drive/${drivePublicKey}`;
 };
 
-const drivesHttp = (pageNumber) => {
-  return `${state.selectedChainNode}/drives${
-    pageNumber && pageNumber != "" ? "?pageNumber=" + pageNumber : ""
-  }`;
+const drivesHttp = (pageSize = 24, pageNumber = 1) => {
+  return `${state.selectedChainNode}/drives?pageSize=${pageSize}&pageNumber=${pageNumber}`;
 };
 
 // Awaiting storage SDK for proper infrastructure implementation
@@ -93,9 +85,12 @@ async function addChainNode(nodeConfigString) {
   }
 
   try {
-    const http = new NetworkHttp(utils.parseNodeConfig(newNodeConfig));
-    const nodeNetworkType = await http.getNetworkType().toPromise();
-    if (nodeNetworkType != config.networkType.number) {
+    const http = new BlockHttp(utils.parseNodeConfig(newNodeConfig));
+    const blockInfo = await http.getBlockByHeight(1).toPromise();
+    if (
+      blockInfo.generationHash.toLowerCase() !=
+      config.network.generationHash.toLowerCase()
+    ) {
       return 0;
     }
     state.chainNodes.push({

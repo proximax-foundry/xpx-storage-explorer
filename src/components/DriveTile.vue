@@ -83,15 +83,37 @@
       <div class="tile-subtitle text-small">
         <div class="text-ellipsis">
           Owner:
-          <b>{{ drive.owner }}</b>
+          <a
+            :href="explorerPublicKeyHttp(drive.owner)"
+            class="text-bold"
+            target="_blank"
+          >
+            {{ drive.owner }}
+          </a>
         </div>
         <div>
           Created:
-          <b>Block {{ $filters.numberArrayToCompact(drive.start) }}</b>
+          <b>
+            Block
+            <a
+              :href="
+                explorerBlockHttp($filters.numberArrayToCompact(drive.start))
+              "
+              target="_blank"
+            >
+              {{ $filters.numberArrayToCompact(drive.start) }}
+            </a>
+          </b>
         </div>
         <div>
           Duration:
-          <b>{{ $filters.numberArrayToCompact(drive.duration) }} Block(s)</b>
+          <b>
+            {{ $filters.numberArrayToCompact(drive.duration) }} Block(s) ({{
+              $filters.blocksToDays(
+                $filters.numberArrayToCompact(drive.duration)
+              )
+            }})
+          </b>
         </div>
         <div>
           Billing Price:
@@ -101,7 +123,11 @@
           Billing Period:
           <b>
             {{ $filters.numberArrayToCompact(drive.billingPeriod) }}
-            Block(s)
+            Block(s) ({{
+              $filters.blocksToDays(
+                $filters.numberArrayToCompact(drive.billingPeriod)
+              )
+            }})
           </b>
         </div>
         <div>
@@ -121,6 +147,7 @@
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { inject } from "vue";
 
 export default {
   name: "DriveTile",
@@ -134,7 +161,13 @@ export default {
     },
   },
   setup() {
+    const appStore = inject("appStore");
     library.add(faHdd);
+
+    return {
+      explorerBlockHttp: appStore.explorerBlockHttp,
+      explorerPublicKeyHttp: appStore.explorerPublicKeyHttp,
+    };
   },
 };
 </script>

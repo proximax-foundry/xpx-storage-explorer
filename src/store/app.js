@@ -2,16 +2,22 @@ import { reactive, readonly } from "vue";
 
 const config = require("@/../config/config.json");
 
-const coreVersion = require("@/../package.json").version;
 const name = "Storage Explorer";
-const ipLocationHostname = config.ipLocation.url;
 
 const state = reactive({
   darkTheme: false,
 });
 
+const explorerBlockHttp = (compactBlock) => {
+  return `${config.chainExplorer.url}/${config.chainExplorer.blockRoute}/${compactBlock}`;
+};
+
+const explorerPublicKeyHttp = (publicKey) => {
+  return `${config.chainExplorer.url}/${config.chainExplorer.publicKeyRoute}/${publicKey}`;
+};
+
 const ipLocationHttp = (ip) => {
-  return `${ipLocationHostname}/${config.ipLocation.endpoint}/${ip}`;
+  return `${config.ipLocation.url}/${config.ipLocation.endpoint}/${ip}`;
 };
 
 function toggleDarkTheme() {
@@ -25,8 +31,11 @@ function toggleDarkTheme() {
 export const appStore = readonly({
   name,
   state,
-  ipLocationHostname,
+  explorerBlockHttp,
+  explorerPublicKeyHttp,
+  ipLocation: config.ipLocation,
   ipLocationHttp,
+  mapboxToken: config.mapboxToken,
   toggleDarkTheme,
-  version: coreVersion,
+  version: require("@/../package.json").version,
 });

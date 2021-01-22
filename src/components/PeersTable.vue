@@ -19,22 +19,26 @@
         v-for="item in peerDetails"
         :key="item.id"
         :class="{
-          'c-hand': map && item.details.longitude && item.details.latitude,
-          'bg-primary': item.id == $route.query.peerId,
-          'text-light': item.id == $route.query.peerId,
+          'c-hand': map && item.details[lngField] && item.details[latField],
+          'bg-secondary': item.id == $route.query.peerId,
         }"
         @click="
-          map && item.details.longitude && item.details.latitude
-            ? mapFocus(item.details.longitude, item.details.latitude)
+          map && item.details[lngField] && item.details[latField]
+            ? mapFocus(item.details[lngField], item.details[latField])
             : null
         "
       >
         <td data-th="Id">{{ item.id }}</td>
         <td data-th="Public Key">
-          {{ $filters.peerIdToPublicKey(item.id) }}
+          <a
+            :href="explorerPublicKeyHttp($filters.peerIdToPublicKey(item.id))"
+            target="_blank"
+          >
+            {{ $filters.peerIdToPublicKey(item.id) }}
+          </a>
         </td>
-        <td data-th="Host">{{ item.details.IPv4 }}</td>
-        <td data-th="Location">{{ item.details.country_name }}</td>
+        <td data-th="Host">{{ item.details[ipField] }}</td>
+        <td data-th="Location">{{ item.details[countryField] }}</td>
         <td data-th="Type">{{ item.type }}</td>
       </tr>
     </transition-group>
@@ -89,11 +93,12 @@ export default {
           );
 
           if (
-            ipDetail.data.IPv4 == "Not found" ||
+            ipDetail.data[appStore.ipLocation.ipField] == "Not found" ||
             peerDetails.value.find(
               (element) =>
                 element.id == props.peersInfo[i].ID &&
-                element.details.IPv4 == ipDetail.data.IPv4
+                element.details[appStore.ipLocation.ipField] ==
+                  ipDetail.data[appStore.ipLocation.ipField]
             )
           ) {
             continue;
@@ -124,7 +129,10 @@ export default {
 
             mapMarkers.value.push(
               new mapboxgl.Marker(figure)
-                .setLngLat([ipDetail.data.longitude, ipDetail.data.latitude])
+                .setLngLat([
+                  ipDetail.data[appStore.ipLocation.longitudeField],
+                  ipDetail.data[appStore.ipLocation.latitudeField],
+                ])
                 .setPopup(
                   new mapboxgl.Popup({
                     offset: [40, -20],
@@ -134,7 +142,7 @@ export default {
                     "<p><strong>" +
                       props.peersInfo[i].ID +
                       "</strong><br />(" +
-                      ipDetail.data.IPv4 +
+                      ipDetail.data[appStore.ipLocation.ipField] +
                       ")</p>"
                   )
                 )
@@ -154,8 +162,8 @@ export default {
       if (peerDetails.value.length > 0) {
         if (props.map) {
           mapFocus(
-            peerDetails.value[0].details.longitude,
-            peerDetails.value[0].details.latitude
+            peerDetails.value[0].details[appStore.ipLocation.longitudeField],
+            peerDetails.value[0].details[appStore.ipLocation.latitudeField]
           );
           context.emit("update:showMap", true);
         }
@@ -163,7 +171,7 @@ export default {
         if (props.peersInfo.length > 0) {
           errorMessage.value =
             "Please check if " +
-            appStore.ipLocationHostname +
+            appStore.ipLocation.url +
             " is blocked by your AdBlocker and unblock it to view more information on each peer node";
         }
 
@@ -190,6 +198,11 @@ export default {
 
     return {
       errorMessage,
+      explorerPublicKeyHttp: appStore.explorerPublicKeyHttp,
+      ipField: appStore.ipLocation.ipField,
+      countryField: appStore.ipLocation.countryField,
+      lngField: appStore.ipLocation.longitudeField,
+      latField: appStore.ipLocation.latitudeField,
       mapFocus,
       peerDetails,
     };
@@ -207,10 +220,7 @@ export default {
   table-layout: fixed;
   width: 100%;
 
-  th:nth-child(1) {
-    width: 40%;
-  }
-
+  th:nth-child(2),
   th:nth-child(3),
   th:nth-child(4) {
     width: 15%;
@@ -220,7 +230,6 @@ export default {
     width: 5%;
   }
 
-  td:nth-child(1),
   td:nth-child(2) {
     overflow: hidden;
     white-space: nowrap;

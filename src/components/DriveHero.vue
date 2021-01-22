@@ -12,7 +12,7 @@
       <h4 v-else-if="driveInfo.state == 2">Active</h4>
       <h4 v-else-if="driveInfo.state == 3">Completed</h4>
       <h4 v-else>Not Active</h4>
-      <h1 class="text-ellipsis">{{ $route.params.cid[0] }}</h1>
+      <h2 class="text-break">{{ $route.params.cid[0] }}</h2>
       <div class="bar">
         <div
           class="bar-item"
@@ -41,22 +41,43 @@
         <div class="column col-3 col-md-4">
           <div>Public Key:</div>
           <div class="text-bold text-ellipsis">
-            {{ driveInfo.multisig }}
+            <a
+              :href="explorerPublicKeyHttp(driveInfo.multisig)"
+              target="_blank"
+            >
+              {{ driveInfo.multisig }}
+            </a>
           </div>
           <div>Owner:</div>
           <div class="text-bold text-ellipsis">
-            {{ driveInfo.owner }}
+            <a :href="explorerPublicKeyHttp(driveInfo.owner)" target="_blank">
+              {{ driveInfo.owner }}
+            </a>
           </div>
         </div>
         <div class="column col-md-4">
           <div>Created:</div>
           <div class="text-bold">
-            Block {{ $filters.numberArrayToCompact(driveInfo.start) }}
+            Block
+            <a
+              :href="
+                explorerBlockHttp(
+                  $filters.numberArrayToCompact(driveInfo.start)
+                )
+              "
+              target="_blank"
+            >
+              {{ $filters.numberArrayToCompact(driveInfo.start) }}
+            </a>
           </div>
           <div>Duration:</div>
           <div class="text-bold">
             {{ $filters.numberArrayToCompact(driveInfo.duration) }}
-            Block(s)
+            Block(s) ({{
+              $filters.blocksToDays(
+                $filters.numberArrayToCompact(driveInfo.duration)
+              )
+            }})
           </div>
         </div>
         <div class="column col-md-4">
@@ -68,13 +89,17 @@
           <div>Billing Period:</div>
           <div class="text-bold">
             {{ $filters.numberArrayToCompact(driveInfo.billingPeriod) }}
-            Block(s)
+            Block(s) ({{
+              $filters.blocksToDays(
+                $filters.numberArrayToCompact(driveInfo.billingPeriod)
+              )
+            }})
           </div>
         </div>
         <div class="column col-md-4">
           <div>Min Replicators:</div>
           <div class="text-bold">{{ driveInfo.minReplicators }}</div>
-          <div>Replicators:</div>
+          <div>Number of Replicators:</div>
           <div class="text-bold">{{ driveInfo.replicators.length }}</div>
         </div>
         <div class="column col-md-4">
@@ -84,14 +109,19 @@
           <div class="text-bold">{{ driveInfo.percentApprovers }} %</div>
         </div>
         <div v-if="driveInfo.replicators.length > 0" class="column col-12">
-          <div class="columns mt-2">
-            <div class="column col-auto">Replicators:</div>
+          <div class="mt-2">Replicators:</div>
+          <div class="columns text-bold">
             <div
               v-for="replicator in driveInfo.replicators"
               :key="replicator.replicator"
-              class="column text-bold text-ellipsis"
+              class="column text-ellipsis"
             >
-              {{ replicator.replicator }}
+              <a
+                :href="explorerPublicKeyHttp(replicator.replicator)"
+                target="_blank"
+              >
+                {{ replicator.replicator }}
+              </a>
             </div>
           </div>
         </div>
@@ -101,6 +131,8 @@
 </template>
 
 <script>
+import { inject } from "vue";
+
 export default {
   name: "DriveHero",
   props: {
@@ -108,6 +140,14 @@ export default {
       type: Object,
       default: null,
     },
+  },
+  setup() {
+    const appStore = inject("appStore");
+
+    return {
+      explorerBlockHttp: appStore.explorerBlockHttp,
+      explorerPublicKeyHttp: appStore.explorerPublicKeyHttp,
+    };
   },
 };
 </script>

@@ -104,7 +104,7 @@ export default {
 
     const updateStorageInfo = async () => {
       try {
-        let drives = await axios.get(siriusStore.drivesHttp());
+        let drives = await axios.get(siriusStore.drivesHttp(100));
 
         contractInfo.value = {
           total: 0,
@@ -145,7 +145,10 @@ export default {
 
             try {
               drives = await axios.get(
-                siriusStore.drivesHttp(drives.data.pagination.pageNumber + 1)
+                siriusStore.drivesHttp(
+                  100,
+                  drives.data.pagination.pageNumber + 1
+                )
               );
             } catch (err) {
               console.error("List Drives Error", err);

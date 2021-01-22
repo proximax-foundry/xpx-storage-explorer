@@ -18,7 +18,7 @@
           v-model="searchText"
           class="form-input input-lg"
           type="text"
-          :placeholder="'Search ' + siriusStore.state.networkType.name"
+          :placeholder="'Search ' + siriusStore.state.network.name"
         />
         <i v-if="loading" class="form-icon loading"></i>
         <i v-else class="form-icon icon icon-search"></i>

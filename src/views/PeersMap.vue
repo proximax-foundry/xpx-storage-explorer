@@ -33,12 +33,12 @@ export default {
   },
   setup() {
     const siriusStore = inject("siriusStore");
+    const appStore = inject("appStore");
     const showMap = ref(true);
     const map = ref(null);
     const peersInfo = ref(null);
 
-    mapboxgl.accessToken =
-      "pk.eyJ1Ijoiai1tb3JhMTUiLCJhIjoiY2p5MGY4a2RhMDJqZjNucXh0anl0ZDd2eCJ9.Lsq-ETN03fbVIctkd9lV3Q";
+    mapboxgl.accessToken = appStore.mapboxToken;
 
     const loadDetails = async () => {
       try {
