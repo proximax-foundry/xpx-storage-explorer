@@ -3,11 +3,7 @@
   <ErrorState v-else-if="driveDetails.err" :err="driveDetails.err" />
   <template v-else>
     <ul class="breadcrumb my-2">
-      <li
-        v-for="(item, index) in $route.params.cid"
-        :key="item"
-        class="breadcrumb-item"
-      >
+      <li v-for="(item, index) in cid" :key="item" class="breadcrumb-item">
         <FontAwesomeIcon
           v-if="index == 0"
           :icon="['fas', 'hdd']"
@@ -17,17 +13,20 @@
         <router-link
           :to="{
             name: 'Drive',
-            params: { cid: $route.params.cid.slice(0, index + 1) },
+            params: { cid: cid.slice(0, index + 1) },
           }"
         >
           {{ item.substr(0, 15) }}
         </router-link>
       </li>
     </ul>
-    <DriveHero :drive-info="driveDetails.data" />
+    <DriveHero :drive-info="driveDetails" />
+    <LoadingState v-if="!driveFS" />
+    <ErrorState v-else-if="driveFS.err" :err="driveFS.err" />
     <DriveFSAccordions
-      :folders="driveDetails.folders"
-      :files="driveDetails.files"
+      v-else
+      :folders="driveFS.folders"
+      :files="driveFS.files"
     />
   </template>
 </template>
@@ -41,7 +40,6 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { faHdd } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { getCurrentInstance, inject, onMounted, ref, watch } from "vue";
-import { useRoute } from "vue-router";
 import axios from "axios";
 
 export default {
@@ -53,77 +51,102 @@ export default {
     FontAwesomeIcon,
     LoadingState,
   },
-  setup() {
+  props: {
+    cid: {
+      type: Array,
+      default: () => [],
+    },
+  },
+  setup(props) {
     const internalInstance = getCurrentInstance();
     const siriusStore = inject("siriusStore");
-    const route = useRoute();
     const driveDetails = ref(null);
+    const driveFS = ref(null);
     library.add(faHdd);
 
     const removeDrivePath = (accumulator, currentValue, currentIndex) =>
       currentIndex == 1 ? currentValue : accumulator + `/${currentValue}`;
 
-    const loadDetails = async () => {
+    const loadDriveDetails = async () => {
       try {
-        const resp = await Promise.all([
-          axios.get(
-            siriusStore.driveHttp(
-              internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
-                route.params.cid[0]
-              )
+        const resp = await axios.get(
+          siriusStore.driveHttp(
+            internalInstance.appContext.config.globalProperties.$filters.cidToPublicKey(
+              props.cid[0]
             )
-          ),
-          axios.get(
-            siriusStore.driveLsHttp(
-              route.params.cid[0],
-              route.params.cid.length > 1
-                ? route.params.cid.reduce(removeDrivePath)
-                : ""
-            )
-          ),
-        ]);
+          )
+        );
 
+        driveDetails.value = resp.data.drive;
+      } catch (err) {
+        console.error("Drive Details Error", err);
         driveDetails.value = {
-          data: resp[0].data.drive,
+          err: "Unable to fetch drive details from selected chain node",
+        };
+      }
+    };
+
+    const loadFileFoldersDetails = async () => {
+      try {
+        const resp = await axios.get(
+          siriusStore.driveLsHttp(
+            props.cid[0],
+            props.cid.length > 1 ? props.cid.reduce(removeDrivePath) : ""
+          )
+        );
+
+        driveFS.value = {
           files: [],
           folders: [],
         };
 
-        if (resp[1].data.List) {
-          resp[1].data.List.forEach((item) => {
+        if (resp.data.List) {
+          resp.data.List.forEach((item) => {
             if (item.Type == "file") {
-              driveDetails.value.files.push(item);
+              driveFS.value.files.push(item);
             } else {
-              driveDetails.value.folders.push(item);
+              driveFS.value.folders.push(item);
             }
           });
         }
       } catch (err) {
-        console.error("Drive Details Error", err);
-        driveDetails.value = {
-          err: "Unable to fetch drive details from selected node",
+        console.error("DriveFS Error", err);
+        driveFS.value = {
+          err: "Unable to find files and folders on selected storage node",
         };
       }
     };
 
     onMounted(async () => {
-      await loadDetails();
+      await loadDriveDetails();
+      if (siriusStore.state.selectedStorageNodeType == "SRN") {
+        driveFS.value = {
+          err: "Please select a SDN to browse drive files and folders",
+        };
+      } else {
+        await loadFileFoldersDetails();
+      }
     });
 
     watch(
-      () => [
-        siriusStore.state.selectedChainNode,
-        siriusStore.state.selectedStorageNode,
-        route.params.cid,
-      ],
+      () => siriusStore.state.selectedChainNode,
       async () => {
         driveDetails.value = null;
-        await loadDetails();
+        await loadDriveDetails();
+      }
+    );
+
+    watch(
+      () => [siriusStore.state.selectedStorageNode, props.cid],
+      async () => {
+        driveFS.value = null;
+        await loadFileFoldersDetails();
       }
     );
 
     return {
       driveDetails,
+      driveFS,
     };
   },
 };

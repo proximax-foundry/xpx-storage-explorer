@@ -27,6 +27,7 @@ const router = createRouter({
       path: "/drive/:cid+",
       name: "Drive",
       component: () => import("@/views/DriveBrowse.vue"),
+      props: true,
       meta: {
         title: "Drive Details",
         showOnNav: false,

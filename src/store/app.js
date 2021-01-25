@@ -6,6 +6,7 @@ const name = "Storage Explorer";
 
 const state = reactive({
   darkTheme: false,
+  browseStorageNode: true,
 });
 
 const explorerBlockHttp = (compactBlock) => {
@@ -28,8 +29,17 @@ function toggleDarkTheme() {
   state.darkTheme = !state.darkTheme;
 }
 
+function setBrowseMode(useStorageNode = true) {
+  if (config.debug) {
+    console.log("setBrowseMode triggered with", useStorageNode);
+  }
+
+  state.browseStorageNode = useStorageNode;
+}
+
 export const appStore = readonly({
   name,
+  version: require("@/../package.json").version,
   state,
   explorerBlockHttp,
   explorerPublicKeyHttp,
@@ -37,5 +47,5 @@ export const appStore = readonly({
   ipLocationHttp,
   mapboxToken: config.mapboxToken,
   toggleDarkTheme,
-  version: require("@/../package.json").version,
+  setBrowseMode,
 });

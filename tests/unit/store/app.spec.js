@@ -18,3 +18,14 @@ describe("change to dark theme", () => {
     expect(appStore.state.darkTheme).toBeTruthy();
   });
 });
+
+describe("change browse mode", () => {
+  it("defaults true", () => {
+    expect(appStore.state.browseStorageNode).toBeTruthy();
+  });
+
+  it("returns false", () => {
+    appStore.setBrowseMode(!appStore.state.browseStorageNode);
+    expect(appStore.state.browseStorageNode).toBeFalsy();
+  });
+});
