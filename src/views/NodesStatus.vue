@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card my-2">
     <div class="card-header">
       <div class="card-title h5 text-ellipsis">Blockchain Node</div>
     </div>
@@ -9,8 +9,7 @@
       <NodeStatusTable v-else :node-detail="chainNodeDetail" />
     </div>
   </div>
-  <div class="divider"></div>
-  <div class="card">
+  <div class="card my-2">
     <div class="card-header">
       <div class="card-title h5 text-ellipsis">Storage Node</div>
     </div>
@@ -79,8 +78,17 @@ export default {
 
     const loadStorageNodeDetails = async () => {
       try {
-        const storageResp = await axios.get(siriusStore.netIdHttp);
-        storageNodeDetail.value = storageResp.data;
+        const resp = await Promise.all([
+          axios.get(siriusStore.netIdHttp),
+          axios.get(siriusStore.versionHttp),
+          axios.get(siriusStore.keyHttp),
+        ]);
+
+        storageNodeDetail.value = {
+          ...resp[0].data,
+          ...resp[1].data,
+          ...resp[2].data,
+        };
         storageNodeDetail.value.type =
           siriusStore.state.selectedStorageNodeType;
         storageNodeDetail.value.ping = 0;

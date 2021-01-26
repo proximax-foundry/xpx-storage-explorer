@@ -20,9 +20,7 @@ const state = reactive({
   selectedStorageNode: computed(() =>
     utils.parseNodeConfig(currentStorageNode.value)
   ),
-  selectedStorageNodeType: computed(() =>
-    currentStorageNode.value.port == 6366 ? "SDN" : "SRN"
-  ),
+  selectedStorageNodeType: computed(() => currentStorageNode.value.type),
 });
 
 const blockHttp = computed(() => new BlockHttp(state.selectedChainNode));
@@ -39,6 +37,12 @@ const drivesHttp = (pageSize = 24, pageNumber = 1) => {
 
 // Awaiting storage SDK for proper infrastructure implementation
 const netIdHttp = computed(() => state.selectedStorageNode + "/api/v1/net/id");
+const versionHttp = computed(
+  () => state.selectedStorageNode + "/api/v1/version"
+);
+const keyHttp = computed(
+  () => state.selectedStorageNode + "/api/v1/ledger/key"
+);
 const peersHttp = computed(
   () => state.selectedStorageNode + "/api/v1/net/peers"
 );
@@ -88,8 +92,8 @@ async function addChainNode(nodeConfigString) {
     const http = new BlockHttp(utils.parseNodeConfig(newNodeConfig));
     const blockInfo = await http.getBlockByHeight(1).toPromise();
     if (
-      blockInfo.generationHash.toLowerCase() !=
-      config.network.generationHash.toLowerCase()
+      blockInfo.generationHash.toUpperCase() !=
+      config.network.generationHash.toUpperCase()
     ) {
       return 0;
     }
@@ -126,14 +130,19 @@ async function addStorageNode(nodeConfigString) {
 
   try {
     const resp = await axios.get(
-      utils.parseNodeConfig(newNodeConfig) + "/api/v1/net/id"
+      utils.parseNodeConfig(newNodeConfig) + "/api/v1/version"
     );
-    if (resp.status != 200 || resp.data.ID.length != 52) {
+    if (
+      resp.status != 200 ||
+      (resp.data.App && !resp.data.App.toLowerCase().startsWith("dfms"))
+    ) {
       return 0;
     }
+
     state.storageNodes.push({
       protocol: newNodeConfig.protocol,
       hostname: newNodeConfig.hostname,
+      type: resp.data.App.toLowerCase().endsWith("client") ? "SDN" : "SRN",
       port: newNodeConfig.port,
     });
     return 1;
@@ -217,6 +226,8 @@ export const siriusStore = readonly({
   driveHttp,
   drivesHttp,
   netIdHttp,
+  versionHttp,
+  keyHttp,
   peersHttp,
   contractLsHttp,
   driveLsHttp,

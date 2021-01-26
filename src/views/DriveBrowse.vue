@@ -87,6 +87,14 @@ export default {
     };
 
     const loadFileFoldersDetails = async () => {
+      if (siriusStore.state.selectedStorageNodeType == "SRN") {
+        driveFS.value = {
+          err: "Please select a SDN to browse drive files and folders",
+        };
+
+        return;
+      }
+
       try {
         const resp = await axios.get(
           siriusStore.driveLsHttp(
@@ -118,14 +126,7 @@ export default {
     };
 
     onMounted(async () => {
-      await loadDriveDetails();
-      if (siriusStore.state.selectedStorageNodeType == "SRN") {
-        driveFS.value = {
-          err: "Please select a SDN to browse drive files and folders",
-        };
-      } else {
-        await loadFileFoldersDetails();
-      }
+      await Promise.all([loadDriveDetails(), loadFileFoldersDetails()]);
     });
 
     watch(
