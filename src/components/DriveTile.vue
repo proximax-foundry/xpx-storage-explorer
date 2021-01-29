@@ -188,9 +188,18 @@ export default {
   padding: $unit-2;
   margin: $unit-2 0;
   border: $border-width solid $border-color;
+  border-radius: $border-radius;
 }
 
 .bar {
+  border-radius: 0;
   background: $gray-color;
+
+  .bar-item {
+    &:first-child,
+    &:last-child {
+      border-radius: 0;
+    }
+  }
 }
 </style>

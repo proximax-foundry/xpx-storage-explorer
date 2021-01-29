@@ -9,7 +9,7 @@
           width="150"
         />
         <span class="divider-vert"></span>
-        <small class="label label-secondary text-bold"
+        <small class="label text-bold"
           >{{ appStore.name }} v{{ appStore.version }}</small
         >
       </router-link>
@@ -41,9 +41,6 @@
         </button>
         <ul class="menu">
           <li class="menu-item">
-            <ThemeSwitcher />
-          </li>
-          <li class="menu-item">
             <NodesController />
           </li>
         </ul>
@@ -51,7 +48,7 @@
     </div>
   </nav>
   <div class="column col-12 text-center">
-    <h1>{{ $route.meta.title || $route.name }}</h1>
+    <h1 class="text-light">{{ $route.meta.title || $route.name }}</h1>
   </div>
   <div class="column col-12">
     <SearchBar />
@@ -61,14 +58,12 @@
 import { inject } from "vue";
 import NodesController from "@/components/NodesController.vue";
 import SearchBar from "@/components/SearchBar.vue";
-import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 
 export default {
   name: "AppHeader",
   components: {
     NodesController,
     SearchBar,
-    ThemeSwitcher,
   },
   setup() {
     const appStore = inject("appStore");
@@ -92,6 +87,17 @@ export default {
   padding: $unit-2;
 }
 
+.btn {
+  &.btn-link {
+    color: $light-color;
+
+    &:focus,
+    &:hover {
+      color: $gray-color-light;
+    }
+  }
+}
+
 .logo {
   align-items: center;
   -ms-flex-align: center;
@@ -99,6 +105,7 @@ export default {
 
 .menu {
   min-width: $control-width-md;
+  color: $body-font-color;
 }
 
 @media (max-width: $size-md) {

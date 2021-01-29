@@ -14,7 +14,7 @@
         ({{ timeElapsed }} seconds ago)
       </div>
     </div>
-    <div class="card-body bg-success m-2">
+    <div class="card-body bg-gradient text-light m-2">
       <FontAwesomeIcon :icon="['fas', 'cube']" size="lg" />
       Upcoming block: <b>{{ blockInfo.height.compact() + 1 }}</b>
     </div>

@@ -11,7 +11,6 @@
         <th>Public Key</th>
         <th>Host</th>
         <th>Location</th>
-        <th>Type</th>
       </tr>
     </thead>
     <transition-group name="peer-table" tag="tbody">
@@ -39,7 +38,6 @@
         </td>
         <td data-th="Host">{{ item.details[ipField] }}</td>
         <td data-th="Location">{{ item.details[countryField] }}</td>
-        <td data-th="Type">{{ item.type }}</td>
       </tr>
     </transition-group>
   </table>
@@ -107,13 +105,11 @@ export default {
           if (route.query.peerId == props.peersInfo[i].ID) {
             peerDetails.value.unshift({
               id: props.peersInfo[i].ID,
-              type: peerDetail[4] == 63666 ? "SDN" : "SRN",
               details: ipDetail.data,
             });
           } else {
             peerDetails.value.push({
               id: props.peersInfo[i].ID,
-              type: peerDetail[4] == 63666 ? "SDN" : "SRN",
               details: ipDetail.data,
             });
           }
@@ -224,10 +220,6 @@ export default {
   th:nth-child(3),
   th:nth-child(4) {
     width: 15%;
-  }
-
-  th:nth-child(5) {
-    width: 5%;
   }
 
   td:nth-child(2) {

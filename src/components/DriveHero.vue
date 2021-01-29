@@ -1,17 +1,22 @@
 <template>
-  <div
-    class="hero my-2"
-    :class="{
-      'bg-warning': driveInfo.state == 1,
-      'bg-success': driveInfo.state == 2,
-      'bg-error': driveInfo.state == 3,
-    }"
-  >
+  <div class="hero my-2">
     <div class="hero-body">
-      <h4 v-if="driveInfo.state == 1">Pending</h4>
-      <h4 v-else-if="driveInfo.state == 2">Active</h4>
-      <h4 v-else-if="driveInfo.state == 3">Completed</h4>
-      <h4 v-else>Not Active</h4>
+      <h4 v-if="driveInfo.state == 1" class="label label-rounded label-warning">
+        Pending
+      </h4>
+      <h4
+        v-else-if="driveInfo.state == 2"
+        class="label label-rounded label-success"
+      >
+        Active
+      </h4>
+      <h4
+        v-else-if="driveInfo.state == 3"
+        class="label label-rounded label-error"
+      >
+        Completed
+      </h4>
+      <h4 v-else class="label label-rounded">Not Active</h4>
       <h2 class="text-break">{{ $route.params.cid[0] }}</h2>
       <div class="bar">
         <div
@@ -161,6 +166,19 @@ export default {
 
 .hero {
   @include shadow-variant($unit-1);
+  border-radius: $border-radius;
+  background: $gray-color-light;
+}
+
+.bar {
+  border-radius: 0;
   background: $gray-color;
+
+  .bar-item {
+    &:first-child,
+    &:last-child {
+      border-radius: 0;
+    }
+  }
 }
 </style>

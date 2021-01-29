@@ -1,5 +1,5 @@
 <template>
-  <header>
+  <header class="bg-gradient">
     <section class="container grid-xl">
       <keep-alive>
         <AppHeader />
@@ -72,13 +72,33 @@ h6,
 .h4,
 .h5,
 .h6 {
+  color: $primary-color;
   font-family: $title-font-family;
+}
+
+a {
+  &:focus,
+  &:hover,
+  &:active,
+  &.active {
+    color: $primary-color;
+    transition: 0.3s;
+    text-decoration: underline;
+  }
+
+  &:visited {
+    color: $link-color-light;
+  }
 }
 
 .btn {
   &.btn-link {
+    color: $dark-color;
+
     &:focus,
     &:hover {
+      color: $primary-color;
+      transition: 0.3s;
       text-decoration: underline;
     }
   }
@@ -91,6 +111,13 @@ h6,
 .input-group {
   .select-fit {
     flex: 0 0 auto;
+  }
+}
+
+.table {
+  thead {
+    background: $dark-color;
+    color: $light-color;
   }
 }
 
@@ -126,20 +153,23 @@ h6,
 
 #app {
   min-width: $size-sm;
-  background: $gray-color-light;
 }
 
 header {
-  background: $secondary-color;
+  color: $light-color;
   margin-bottom: $unit-2;
 }
 
 footer {
-  background: $light-color;
+  background: $gray-color-light;
   margin-top: $unit-2;
 }
 
 .full-height {
   min-height: 100vh;
+}
+
+.bg-gradient {
+  background: -webkit-linear-gradient(top, #33b7d2, #0f7084);
 }
 </style>

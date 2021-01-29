@@ -9,7 +9,7 @@
       </div>
       <div class="card-subtitle">on Network</div>
     </div>
-    <div class="card-body bg-success m-2">
+    <div class="card-body bg-gradient text-light m-2">
       <FontAwesomeIcon :icon="['fas', 'hdd']" size="lg" />
       Active Contracts: <b>{{ contractInfo.active }}</b>
     </div>

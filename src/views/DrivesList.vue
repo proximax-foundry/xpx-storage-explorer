@@ -1,10 +1,12 @@
 <template>
   <ul class="tab tab-block my-2">
     <li class="tab-item" :class="{ active: !appStore.state.browseStorageNode }">
-      <a class="c-hand" @click="switchTab(false)">Network</a>
+      <button class="btn btn-link" @click="switchTab(false)">Network</button>
     </li>
     <li class="tab-item" :class="{ active: appStore.state.browseStorageNode }">
-      <a class="c-hand" @click="switchTab(true)">Selected Node</a>
+      <button class="btn btn-link" @click="switchTab(true)">
+        Selected Node
+      </button>
     </li>
     <li class="tab-item tab-action">
       <div class="input-group input-inline">
@@ -231,6 +233,20 @@ export default {
 @import "spectre.css/src/tabs";
 
 .tab {
+  .tab-item {
+    .btn {
+      border-radius: 0;
+      width: 100%;
+      text-decoration: none;
+    }
+
+    &.active .btn {
+      color: $primary-color;
+      font-weight: bold;
+      border-bottom-color: $primary-color;
+    }
+  }
+
   &.tab-block {
     .tab-action {
       flex: 0 0 auto;

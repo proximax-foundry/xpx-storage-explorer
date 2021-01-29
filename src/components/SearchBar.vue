@@ -5,7 +5,7 @@
     @submit.prevent="search"
   >
     <fieldset :disabled="loading">
-      <div class="input-group has-icon-right">
+      <div class="input-group">
         <select
           class="form-select select-lg select-fit"
           @change="searchType = $event.target.value"
@@ -20,8 +20,12 @@
           type="text"
           :placeholder="'Search ' + siriusStore.state.network.name"
         />
-        <i v-if="loading" class="form-icon loading"></i>
-        <i v-else class="form-icon icon icon-search"></i>
+        <button
+          class="btn btn-lg btn-primary input-group-btn"
+          :class="{ loading: loading }"
+        >
+          <i class="icon icon-search"></i>
+        </button>
       </div>
       <div v-if="err" class="form-input-hint text-center">{{ err }}</div>
     </fieldset>
@@ -118,9 +122,8 @@ export default {
 
 <style lang="scss" scoped>
 @import "spectre.css/src/variables";
-@import "spectre.css/src/mixins/shadow";
 
 .input-group {
-  @include shadow-variant($unit-o);
+  color: $body-font-color;
 }
 </style>

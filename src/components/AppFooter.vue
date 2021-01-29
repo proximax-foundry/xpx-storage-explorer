@@ -184,17 +184,6 @@ export default {
 @import "@/assets/main";
 @import "spectre.css/src/variables";
 
-.btn {
-  &.btn-link {
-    color: $dark-color;
-
-    &:focus,
-    &:hover {
-      color: $gray-color-dark;
-    }
-  }
-}
-
 .column {
   padding: $unit-6 $unit-2;
 }
