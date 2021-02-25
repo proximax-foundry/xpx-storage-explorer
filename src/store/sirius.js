@@ -5,14 +5,28 @@ import axios from "axios";
 
 const config = require("@/../config/config.json");
 
+function getChainNodes() {
+  const existingNodes = sessionStorage.getItem(
+    config.sessionStorage.chainNodesKey
+  );
+  return existingNodes ? JSON.parse(existingNodes) : config.chainNodes;
+}
+
+function getStorageNodes() {
+  const existingNodes = sessionStorage.getItem(
+    config.sessionStorage.storageNodesKey
+  );
+  return existingNodes ? JSON.parse(existingNodes) : config.storageNodes;
+}
+
 // ALWAYS use function selectNewChainNode to change currentChainNode value, to avoid web socket listening on old node
-const currentChainNode = ref(config.chainNodes[0]);
-const currentStorageNode = ref(config.storageNodes[0]);
+const currentChainNode = ref(getChainNodes()[0]);
+const currentStorageNode = ref(getStorageNodes()[0]);
 const listenerChainWS = ref(null);
 
 const state = reactive({
-  chainNodes: config.chainNodes,
-  storageNodes: config.storageNodes,
+  chainNodes: getChainNodes(),
+  storageNodes: getStorageNodes(),
   network: config.network,
   selectedChainNode: computed(() =>
     utils.parseNodeConfig(currentChainNode.value)
@@ -97,11 +111,16 @@ async function addChainNode(nodeConfigString) {
     ) {
       return 0;
     }
-    state.chainNodes.push({
+
+    state.chainNodes.unshift({
       protocol: newNodeConfig.protocol,
       hostname: newNodeConfig.hostname,
       port: newNodeConfig.port,
     });
+    sessionStorage.setItem(
+      config.sessionStorage.chainNodesKey,
+      JSON.stringify(state.chainNodes)
+    );
     return 1;
   } catch (err) {
     if (config.debug) {
@@ -139,12 +158,16 @@ async function addStorageNode(nodeConfigString) {
       return 0;
     }
 
-    state.storageNodes.push({
+    state.storageNodes.unshift({
       protocol: newNodeConfig.protocol,
       hostname: newNodeConfig.hostname,
       type: resp.data.App.toLowerCase().endsWith("client") ? "SDN" : "SRN",
       port: newNodeConfig.port,
     });
+    sessionStorage.setItem(
+      config.sessionStorage.storageNodesKey,
+      JSON.stringify(state.storageNodes)
+    );
     return 1;
   } catch (err) {
     if (config.debug) {

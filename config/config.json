@@ -1,4 +1,8 @@
 {
+  "sessionStorage": {
+    "chainNodesKey": "chainNodes",
+    "storageNodesKey": "storageNodes"
+  },
   "chainNodes": [
     {
       "protocol": "http",

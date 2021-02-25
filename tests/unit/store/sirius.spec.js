@@ -40,12 +40,12 @@ describe("add chain node", () => {
     expect(res).toBe(0);
   });
 
-//  it("given non-working node, returns 0", async () => {
-//    const res = await siriusStore.addChainNode(
-//      workingStorageNodeConfigString
-//    );
-//    expect(res).toBe(0);
-//  });
+  //  it("given non-working node, returns 0", async () => {
+  //    const res = await siriusStore.addChainNode(
+  //      workingStorageNodeConfigString
+  //    );
+  //    expect(res).toBe(0);
+  //  });
 });
 
 describe("select chain node", () => {
@@ -61,7 +61,9 @@ describe("select chain node", () => {
   });
 
   it("given non-existing node, returns false", async () => {
-    const res = await siriusStore.selectNewChainNode(wrongNetworkChainNodeConfigString);
+    const res = await siriusStore.selectNewChainNode(
+      wrongNetworkChainNodeConfigString
+    );
     expect(res).toBeFalsy();
   });
 });
@@ -102,7 +104,9 @@ describe("select storage node", () => {
   });
 
   it("given non-existing node, returns false", async () => {
-    const res = await siriusStore.selectNewStorageNode(wrongNetworkStorageNodeConfigString);
+    const res = await siriusStore.selectNewStorageNode(
+      wrongNetworkStorageNodeConfigString
+    );
     expect(res).toBeFalsy();
   });
 });

@@ -8,6 +8,7 @@
             query: {
               pageNumber:
                 pagination.pageNumber == 1 ? 1 : pagination.pageNumber - 1,
+              pageSize: pagination.pageSize,
             },
           }"
           class="btn btn-link"
@@ -21,7 +22,10 @@
         :class="{ active: n == pagination.pageNumber }"
       >
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: n } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: n, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >{{ n }}</router-link
         >
@@ -40,6 +44,7 @@
                 pagination.pageNumber == pagination.totalPages
                   ? pagination.totalPages
                   : pagination.pageNumber + 1,
+              pageSize: pagination.pageSize,
             },
           }"
           class="btn btn-link"
@@ -50,28 +55,40 @@
     <template v-else-if="pagination.pageNumber == 1">
       <li class="page-item disabled">
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: 1, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >Prev</router-link
         >
       </li>
       <li class="page-item active">
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: 1, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >1</router-link
         >
       </li>
       <li class="page-item">
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: 2 } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: 2, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >2</router-link
         >
       </li>
       <li class="page-item">
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: 3 } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: 3, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >3</router-link
         >
@@ -83,7 +100,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.totalPages },
+            query: {
+              pageNumber: pagination.totalPages,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >{{ pagination.totalPages }}</router-link
@@ -91,7 +111,10 @@
       </li>
       <li class="page-item">
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: 2 } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: 2, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >Next</router-link
         >
@@ -102,7 +125,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber - 1 },
+            query: {
+              pageNumber: pagination.pageNumber - 1,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >Prev</router-link
@@ -110,7 +136,10 @@
       </li>
       <li class="page-item">
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: 1, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >1</router-link
         >
@@ -122,7 +151,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber - 2 },
+            query: {
+              pageNumber: pagination.pageNumber - 2,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >{{ pagination.pageNumber - 2 }}</router-link
@@ -132,7 +164,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber - 1 },
+            query: {
+              pageNumber: pagination.pageNumber - 1,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >{{ pagination.pageNumber - 1 }}</router-link
@@ -142,7 +177,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.totalPages },
+            query: {
+              pageNumber: pagination.totalPages,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >{{ pagination.totalPages }}</router-link
@@ -152,7 +190,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.totalPages },
+            query: {
+              pageNumber: pagination.totalPages,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >Next</router-link
@@ -164,7 +205,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber - 1 },
+            query: {
+              pageNumber: pagination.pageNumber - 1,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >Prev</router-link
@@ -172,7 +216,10 @@
       </li>
       <li v-if="pagination.pageNumber - 1 != 1" class="page-item">
         <router-link
-          :to="{ path: '/drives', query: { pageNumber: 1 } }"
+          :to="{
+            path: '/drives',
+            query: { pageNumber: 1, pageSize: pagination.pageSize },
+          }"
           class="btn btn-link"
           >1</router-link
         >
@@ -184,7 +231,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber - 1 },
+            query: {
+              pageNumber: pagination.pageNumber - 1,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
           >{{ pagination.pageNumber - 1 }}</router-link
@@ -194,7 +244,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber },
+            query: {
+              pageNumber: pagination.pageNumber,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
         >
@@ -205,7 +258,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber + 1 },
+            query: {
+              pageNumber: pagination.pageNumber + 1,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
         >
@@ -225,7 +281,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.totalPages },
+            query: {
+              pageNumber: pagination.totalPages,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
         >
@@ -236,7 +295,10 @@
         <router-link
           :to="{
             path: '/drives',
-            query: { pageNumber: pagination.pageNumber + 1 },
+            query: {
+              pageNumber: pagination.pageNumber + 1,
+              pageSize: pagination.pageSize,
+            },
           }"
           class="btn btn-link"
         >

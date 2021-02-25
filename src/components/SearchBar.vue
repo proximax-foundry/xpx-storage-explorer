@@ -18,7 +18,10 @@
           v-model="searchText"
           class="form-input input-lg"
           type="text"
-          :placeholder="'Search ' + siriusStore.state.network.name"
+          :placeholder="
+            'Search peer or drive id on Storage ' +
+            siriusStore.state.network.name
+          "
         />
         <button
           class="btn btn-lg btn-primary input-group-btn"
