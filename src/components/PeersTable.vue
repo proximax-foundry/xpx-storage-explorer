@@ -7,7 +7,7 @@
   >
     <thead>
       <tr>
-        <th>ID</th>
+        <th>Peer ID</th>
         <th>Public Key</th>
         <th>Host</th>
         <th>Location</th>
@@ -27,7 +27,7 @@
             : null
         "
       >
-        <td data-th="Id">{{ item.id }}</td>
+        <td data-th="Peer ID">{{ item.id }}</td>
         <td data-th="Public Key">
           <a
             :href="explorerPublicKeyHttp($filters.peerIdToPublicKey(item.id))"
